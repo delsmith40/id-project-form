@@ -5,6 +5,7 @@ import {
 } from "@/components/ui/accordion";
 import { Progress } from "@/components/ui/progress";
 import { QuestionInput } from "./QuestionInput";
+import { cn } from "@/lib/utils";
 
 interface QuestionSectionProps {
   index: number;
@@ -27,6 +28,13 @@ export function QuestionSection({
   onAnswerChange,
   progress,
 }: QuestionSectionProps) {
+  const getProgressColor = (progress: number) => {
+    if (progress >= 75) return "bg-[#8B5CF6]"; // Vivid Purple for 75-100%
+    if (progress >= 50) return "bg-[#D3E4FD]"; // Soft Blue for 50-74%
+    if (progress >= 25) return "bg-[#FEC6A1]"; // Soft Orange for 25-49%
+    return "bg-gray-200"; // Default color for 0-24%
+  };
+
   return (
     <AccordionItem
       value={`section-${index}`}
@@ -36,14 +44,28 @@ export function QuestionSection({
         <div className="flex flex-col items-start w-full">
           <div className="flex justify-between w-full items-center">
             <span className="text-lg font-semibold">{title}</span>
-            <span className="text-sm text-muted-foreground">
+            <span className={cn(
+              "text-sm",
+              progress >= 75 ? "text-[#8B5CF6]" :
+              progress >= 50 ? "text-blue-500" :
+              progress >= 25 ? "text-orange-500" :
+              "text-muted-foreground"
+            )}>
               {Math.round(progress)}%
             </span>
           </div>
           {timeline && (
             <span className="text-sm text-muted-foreground">{timeline}</span>
           )}
-          <Progress value={progress} className="mt-2" />
+          <div className="w-full h-2 mt-2 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className={cn(
+                "h-full transition-all duration-300",
+                getProgressColor(progress)
+              )}
+              style={{ width: `${progress}%` }}
+            />
+          </div>
         </div>
       </AccordionTrigger>
       <AccordionContent className="px-4 py-3 space-y-4">
