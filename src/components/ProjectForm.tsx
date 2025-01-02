@@ -110,7 +110,7 @@ export function ProjectForm({ phase }: ProjectFormProps) {
     toast({
       title: "Project Submitted (Bypass Mode)",
       description: "Your project has been submitted without completion checks!",
-      variant: "warning",
+      variant: "default",
     });
     navigate("/");
   };
