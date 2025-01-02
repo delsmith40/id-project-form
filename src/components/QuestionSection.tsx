@@ -29,7 +29,8 @@ export function QuestionSection({
   progress,
 }: QuestionSectionProps) {
   const getProgressColor = (progress: number) => {
-    if (progress >= 75) return "bg-blue-300"; // Light Blue for 75-100%
+    if (progress === 100) return "bg-orange-500 animate-blink"; // Blinking Orange for 100%
+    if (progress >= 75) return "bg-blue-300"; // Light Blue for 75-99%
     if (progress >= 50) return "bg-yellow-400"; // Yellow for 50-74%
     if (progress >= 25) return "bg-red-500"; // Red for 25-49%
     return "bg-gray-200"; // Default color for 0-24%
@@ -46,6 +47,7 @@ export function QuestionSection({
             <span className="text-lg font-semibold">{title}</span>
             <span className={cn(
               "text-sm",
+              progress === 100 ? "text-orange-500 animate-blink" :
               progress >= 75 ? "text-blue-300" :
               progress >= 50 ? "text-yellow-400" :
               progress >= 25 ? "text-red-500" :

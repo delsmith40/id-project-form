@@ -97,6 +97,10 @@ export default {
           "0%": { transform: "scale(1) translate(0, 0)" },
           "50%": { transform: "scale(1.05) translate(-1%, -1%)" },
           "100%": { transform: "scale(1) translate(0, 0)" }
+        },
+        "blink": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.5" }
         }
       },
       animation: {
@@ -105,6 +109,7 @@ export default {
         "fade-in": "fade-in 0.3s ease-out",
         "contrast-pulse": "contrast-pulse 4s ease-in-out infinite",
         "ken-burns": "ken-burns 20s ease-in-out infinite",
+        "blink": "blink 1s ease-in-out infinite"
       },
     },
   },
