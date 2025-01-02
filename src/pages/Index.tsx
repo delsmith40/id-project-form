@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,27 +14,27 @@ import {
 
 const Index = () => {
   const navigate = useNavigate();
+  const [projects, setProjects] = useState([]);
 
-  // Sample data - in a real app, this would come from your database
-  const proposedProjects = [
-    { id: 1, title: "New Training Module", teamMember: "John Doe", date: "2024-04-01" },
-    { id: 2, title: "Employee Onboarding", teamMember: "Jane Smith", date: "2024-04-15" },
-  ];
-
-  const currentProjects = [
-    { id: 3, title: "Sales Training", teamMember: "Mike Johnson", date: "2024-03-01", progress: "45%" },
-    { id: 4, title: "Leadership Development", teamMember: "Sarah Wilson", date: "2024-02-15", progress: "70%" },
-  ];
-
-  const completedProjects = [
-    { id: 5, title: "Customer Service Training", teamMember: "Tom Brown", date: "2024-01-15", completedDate: "2024-03-15" },
-    { id: 6, title: "Safety Protocols", teamMember: "Lisa Davis", date: "2024-01-01", completedDate: "2024-02-28" },
-  ];
+  useEffect(() => {
+    // In a real implementation, this would be an API call to your backend
+    // For now, we'll fetch from localStorage as a temporary solution
+    const storedProjects = localStorage.getItem('projects');
+    if (storedProjects) {
+      const parsedProjects = JSON.parse(storedProjects);
+      setProjects(parsedProjects);
+    }
+  }, []);
 
   const handleNewProject = () => {
     navigate("/analyze");
     localStorage.clear(); // Clear any existing project data
   };
+
+  // Filter projects based on their status
+  const proposedProjects = projects.filter(project => project.status === 'proposed');
+  const currentProjects = projects.filter(project => project.status === 'in_progress');
+  const completedProjects = projects.filter(project => project.status === 'completed');
 
   const ProjectTable = ({ projects, showProgress = false, showCompletedDate = false }) => (
     <Table>
