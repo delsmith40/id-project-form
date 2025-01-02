@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ProgressBar } from "./ProgressBar";
 import {
   Sidebar,
@@ -11,6 +11,20 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar";
 import { phaseOrder } from "@/data/phaseData";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -57,7 +71,26 @@ const phases = [
 
 export function Layout({ children }: LayoutProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const currentPhase = location.pathname.split("/")[1] || "analyze";
+
+  const handleDeleteProject = () => {
+    // Clear all phase-related data from localStorage
+    phaseOrder.forEach((phase) => {
+      localStorage.removeItem(`${phase}-answers`);
+    });
+    // Clear project info
+    localStorage.removeItem("projectForm");
+    
+    toast({
+      title: "Project Deleted",
+      description: "All project data has been removed successfully.",
+    });
+    
+    // Navigate to home page
+    navigate("/");
+  };
 
   // Calculate progress based on localStorage data
   const calculatePhaseProgress = (phaseId: string) => {
@@ -136,10 +169,33 @@ export function Layout({ children }: LayoutProps) {
                 progress={calculateOverallProgress()}
                 label="Overall Progress"
               />
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" className="w-full">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete Project
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete your
+                      project data and remove all saved progress.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteProject}>
+                      Delete Project
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </SidebarContent>
         </Sidebar>
-        <main className="flex-1 p-8">{children}</main>
+        <main className="flex-1 p-8 animate-[pulse_4s_ease-in-out_infinite] bg-muted/50">{children}</main>
       </div>
     </SidebarProvider>
   );
