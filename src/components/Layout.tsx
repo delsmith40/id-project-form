@@ -195,7 +195,11 @@ export function Layout({ children }: LayoutProps) {
             </div>
           </SidebarContent>
         </Sidebar>
-        <main className="flex-1 p-8 animate-[pulse_4s_ease-in-out_infinite] bg-muted/50">{children}</main>
+        <main className="flex-1 p-8 animate-[pulse_4s_ease-in-out_infinite] dark:bg-slate-900 bg-opacity-50 relative overflow-hidden">
+          <div className="absolute inset-0 bg-grid-slate-900/[0.04] dark:bg-grid-slate-100/[0.03] bg-[size:3rem_3rem] -z-10" />
+          <div className="absolute inset-0 bg-gradient-to-tr from-slate-900/30 to-slate-900/0 dark:from-slate-900/80 dark:to-slate-900/20 -z-10" />
+          {children}
+        </main>
       </div>
     </SidebarProvider>
   );

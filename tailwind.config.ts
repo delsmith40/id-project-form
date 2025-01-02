@@ -66,6 +66,11 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      
+      backgroundImage: {
+        'grid-slate-900': "linear-gradient(to right, rgb(15 23 42 / var(--tw-bg-opacity)) 1px, transparent 1px), linear-gradient(to bottom, rgb(15 23 42 / var(--tw-bg-opacity)) 1px, transparent 1px)",
+        'grid-slate-100': "linear-gradient(to right, rgb(241 245 249 / var(--tw-bg-opacity)) 1px, transparent 1px), linear-gradient(to bottom, rgb(241 245 249 / var(--tw-bg-opacity)) 1px, transparent 1px)",
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
