@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { BarChart3 } from "lucide-react";
 
 const phases = [
   { id: "analyze", title: "Analyze Needs and Goals", timeline: "1-2 weeks", color: "#9b87f5" },
@@ -55,9 +56,18 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto py-8">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          Covington Instructional Design Project Form
-        </h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-800">
+            Covington Instructional Design Project Form
+          </h1>
+          <Button
+            onClick={() => navigate("/analytics")}
+            className="flex items-center gap-2"
+          >
+            <BarChart3 className="w-4 h-4" />
+            View Analytics
+          </Button>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Left Sidebar with Phase Cards */}
