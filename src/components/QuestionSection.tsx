@@ -29,9 +29,9 @@ export function QuestionSection({
   progress,
 }: QuestionSectionProps) {
   const getProgressColor = (progress: number) => {
-    if (progress >= 75) return "bg-[#8B5CF6]"; // Vivid Purple for 75-100%
-    if (progress >= 50) return "bg-[#D3E4FD]"; // Soft Blue for 50-74%
-    if (progress >= 25) return "bg-[#FEC6A1]"; // Soft Orange for 25-49%
+    if (progress >= 75) return "bg-blue-300"; // Light Blue for 75-100%
+    if (progress >= 50) return "bg-yellow-400"; // Yellow for 50-74%
+    if (progress >= 25) return "bg-red-500"; // Red for 25-49%
     return "bg-gray-200"; // Default color for 0-24%
   };
 
@@ -46,9 +46,9 @@ export function QuestionSection({
             <span className="text-lg font-semibold">{title}</span>
             <span className={cn(
               "text-sm",
-              progress >= 75 ? "text-[#8B5CF6]" :
-              progress >= 50 ? "text-blue-500" :
-              progress >= 25 ? "text-orange-500" :
+              progress >= 75 ? "text-blue-300" :
+              progress >= 50 ? "text-yellow-400" :
+              progress >= 25 ? "text-red-500" :
               "text-muted-foreground"
             )}>
               {Math.round(progress)}%
