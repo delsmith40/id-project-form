@@ -94,6 +94,27 @@ export function ProjectForm({ phase }: ProjectFormProps) {
     navigate("/");
   };
 
+  const handleBypassSubmit = () => {
+    // Only check if basic project information is filled
+    if (!formData.projectName || !formData.date || !formData.teamMember) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all project information fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Submit project without completion checks
+    localStorage.setItem("projectSubmitted", "true");
+    toast({
+      title: "Project Submitted (Bypass Mode)",
+      description: "Your project has been submitted without completion checks!",
+      variant: "warning",
+    });
+    navigate("/");
+  };
+
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
       <Card className="animate-fade-in">
@@ -156,6 +177,13 @@ export function ProjectForm({ phase }: ProjectFormProps) {
               className="bg-green-600 hover:bg-green-700"
             >
               Submit Project
+            </Button>
+            <Button 
+              onClick={handleBypassSubmit}
+              variant="outline"
+              className="border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white"
+            >
+              Bypass Submit
             </Button>
           </div>
         </CardContent>
