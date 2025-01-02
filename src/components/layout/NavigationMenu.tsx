@@ -30,7 +30,7 @@ export function NavigationMenu({ phases, currentPhase, calculatePhaseProgress }:
       <SidebarMenuItem>
         <button
           onClick={() => navigate('/')}
-          className="flex items-center gap-2 w-full rounded-lg p-4 mb-3 transition-all duration-200 hover:scale-[1.02] bg-phase-analyze text-white hover:bg-opacity-90"
+          className="flex items-center gap-2 w-full rounded-lg p-4 mb-3 transition-all duration-200 hover:scale-[1.02] bg-[#D946EF] text-white hover:bg-opacity-90 shadow-lg ring-2 ring-white/20"
         >
           <Home className="h-5 w-5" />
           <span className="font-semibold">Home</span>
