@@ -63,6 +63,7 @@ export function ProjectForm({ phase }: ProjectFormProps) {
       projectName: "",
       date: undefined,
       teamMember: "",
+      status: "proposed", // Include status when resetting form data
     });
   };
 
