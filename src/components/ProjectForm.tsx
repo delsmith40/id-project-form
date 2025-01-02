@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { PhaseQuestions } from "./PhaseQuestions";
 
 interface ProjectFormProps {
   phase: string;
@@ -17,7 +18,6 @@ export function ProjectForm({ phase }: ProjectFormProps) {
   });
 
   const handleSave = () => {
-    // In a real app, this would save to a backend
     localStorage.setItem("projectForm", JSON.stringify(formData));
     toast({
       title: "Progress Saved",
@@ -57,6 +57,10 @@ export function ProjectForm({ phase }: ProjectFormProps) {
       <Button onClick={handleSave} className="mt-4">
         Save Progress
       </Button>
+
+      <div className="mt-8">
+        <PhaseQuestions phase={phase} />
+      </div>
     </div>
   );
 }
