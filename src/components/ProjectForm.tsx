@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,18 @@ export function ProjectForm({ phase }: ProjectFormProps) {
     date: undefined as Date | undefined,
     teamMember: "",
   });
+
+  // Load saved data when component mounts
+  useEffect(() => {
+    const savedData = localStorage.getItem("projectForm");
+    if (savedData) {
+      const parsed = JSON.parse(savedData);
+      setFormData({
+        ...parsed,
+        date: parsed.date ? new Date(parsed.date) : undefined,
+      });
+    }
+  }, []);
 
   const handleSave = () => {
     localStorage.setItem("projectForm", JSON.stringify({
