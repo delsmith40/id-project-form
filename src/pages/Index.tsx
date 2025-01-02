@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { PhaseCard } from "@/components/PhaseCard";
 import { ProgressBar } from "@/components/ProgressBar";
 import { ProjectForm } from "@/components/ProjectForm";
@@ -13,6 +14,7 @@ const phases = [
 ];
 
 const Index = () => {
+  const navigate = useNavigate();
   const [activePhase, setActivePhase] = useState("analyze");
   const [phaseProgress, setPhaseProgress] = useState({
     analyze: 30,
@@ -25,6 +27,11 @@ const Index = () => {
 
   const overallProgress =
     Object.values(phaseProgress).reduce((acc, curr) => acc + curr, 0) / phases.length;
+
+  const handlePhaseClick = (phaseId: string) => {
+    setActivePhase(phaseId);
+    navigate(`/${phaseId}`);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -44,7 +51,7 @@ const Index = () => {
                 color={phase.color}
                 progress={phaseProgress[phase.id as keyof typeof phaseProgress]}
                 isActive={activePhase === phase.id}
-                onClick={() => setActivePhase(phase.id)}
+                onClick={() => handlePhaseClick(phase.id)}
               />
             ))}
           </div>
