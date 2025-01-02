@@ -23,7 +23,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, Home } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 interface LayoutProps {
@@ -118,6 +118,15 @@ export function Layout({ children }: LayoutProps) {
         <Sidebar>
           <SidebarContent>
             <SidebarGroup>
+              <SidebarMenuItem>
+                <button
+                  onClick={() => navigate('/')}
+                  className="flex items-center gap-2 w-full rounded-lg p-4 mb-3 transition-all duration-200 hover:scale-[1.02] bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+                >
+                  <Home className="h-5 w-5" />
+                  <span className="font-semibold">Home</span>
+                </button>
+              </SidebarMenuItem>
               <SidebarGroupLabel>Project Phases</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
