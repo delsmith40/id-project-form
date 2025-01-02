@@ -60,6 +60,23 @@ export function ProjectForm({ phase }: ProjectFormProps) {
     return Math.round((answeredQuestions / totalQuestions) * 100) || 0;
   };
 
+  const clearAllFormData = () => {
+    // Clear project form data
+    localStorage.removeItem("projectForm");
+    
+    // Clear all phase answers
+    phaseOrder.forEach(phase => {
+      localStorage.removeItem(`${phase}-answers`);
+    });
+    
+    // Reset form state
+    setFormData({
+      projectName: "",
+      date: undefined,
+      teamMember: "",
+    });
+  };
+
   const handleSubmitProject = () => {
     // Check if all phases are completed
     const incompletePhases = phaseOrder.filter(
@@ -87,6 +104,7 @@ export function ProjectForm({ phase }: ProjectFormProps) {
 
     // Submit project
     localStorage.setItem("projectSubmitted", "true");
+    clearAllFormData();
     toast({
       title: "Project Submitted",
       description: "Your project has been successfully submitted!",
@@ -107,6 +125,7 @@ export function ProjectForm({ phase }: ProjectFormProps) {
 
     // Submit project without completion checks
     localStorage.setItem("projectSubmitted", "true");
+    clearAllFormData();
     toast({
       title: "Project Submitted (Bypass Mode)",
       description: "Your project has been submitted without completion checks!",
