@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -25,6 +25,14 @@ export function PhaseQuestions({ phase }: PhaseQuestionsProps) {
   const navigate = useNavigate();
   const [answers, setAnswers] = useState<Record<string, string>>({});
 
+  // Load saved answers when component mounts
+  useEffect(() => {
+    const savedAnswers = localStorage.getItem(`${phase}-answers`);
+    if (savedAnswers) {
+      setAnswers(JSON.parse(savedAnswers));
+    }
+  }, [phase]);
+
   const handleSave = () => {
     localStorage.setItem(`${phase}-answers`, JSON.stringify(answers));
     toast({
@@ -49,6 +57,12 @@ export function PhaseQuestions({ phase }: PhaseQuestionsProps) {
       ...prev,
       [questionId]: value,
     }));
+
+    // Save to localStorage on each change
+    localStorage.setItem(`${phase}-answers`, JSON.stringify({
+      ...answers,
+      [questionId]: value,
+    }));
   };
 
   const getPhaseData = (): PhaseData => {
@@ -68,6 +82,14 @@ export function PhaseQuestions({ phase }: PhaseQuestionsProps) {
       default:
         return [];
     }
+  };
+
+  const calculateSectionProgress = (questions: { id: string; text: string }[]) => {
+    const totalQuestions = questions.length;
+    const answeredQuestions = questions.filter(q => 
+      answers[q.id] && answers[q.id].trim() !== ""
+    ).length;
+    return (answeredQuestions / totalQuestions) * 100;
   };
 
   const phaseData = getPhaseData();
@@ -101,6 +123,7 @@ export function PhaseQuestions({ phase }: PhaseQuestionsProps) {
               questions={section.questions}
               answers={answers}
               onAnswerChange={handleAnswerChange}
+              progress={calculateSectionProgress(section.questions)}
             />
           ))}
         </Accordion>

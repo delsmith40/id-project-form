@@ -3,6 +3,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
+import { Progress } from "@/components/ui/progress";
 import { QuestionInput } from "./QuestionInput";
 
 interface QuestionSectionProps {
@@ -13,6 +14,7 @@ interface QuestionSectionProps {
   questions: { id: string; text: string }[];
   answers: Record<string, string>;
   onAnswerChange: (questionId: string, value: string) => void;
+  progress: number;
 }
 
 export function QuestionSection({
@@ -23,6 +25,7 @@ export function QuestionSection({
   questions,
   answers,
   onAnswerChange,
+  progress,
 }: QuestionSectionProps) {
   return (
     <AccordionItem
@@ -30,11 +33,17 @@ export function QuestionSection({
       className="border rounded-lg mb-4 shadow-sm"
     >
       <AccordionTrigger className="px-4 py-3 hover:bg-muted/50 rounded-t-lg">
-        <div className="flex flex-col items-start">
-          <span className="text-lg font-semibold">{title}</span>
+        <div className="flex flex-col items-start w-full">
+          <div className="flex justify-between w-full items-center">
+            <span className="text-lg font-semibold">{title}</span>
+            <span className="text-sm text-muted-foreground">
+              {Math.round(progress)}%
+            </span>
+          </div>
           {timeline && (
             <span className="text-sm text-muted-foreground">{timeline}</span>
           )}
+          <Progress value={progress} className="mt-2" />
         </div>
       </AccordionTrigger>
       <AccordionContent className="px-4 py-3 space-y-4">
