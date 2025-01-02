@@ -10,11 +10,26 @@ const Index = () => {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
-    const storedProjects = localStorage.getItem('projects');
-    if (storedProjects) {
-      const parsedProjects = JSON.parse(storedProjects);
-      setProjects(parsedProjects);
-    }
+    const loadProjects = () => {
+      const storedProjects = localStorage.getItem('projects');
+      if (storedProjects) {
+        try {
+          const parsedProjects = JSON.parse(storedProjects);
+          setProjects(Array.isArray(parsedProjects) ? parsedProjects : []);
+        } catch (error) {
+          console.error('Error parsing projects:', error);
+          setProjects([]);
+        }
+      }
+    };
+
+    loadProjects();
+    // Add event listener for storage changes
+    window.addEventListener('storage', loadProjects);
+    
+    return () => {
+      window.removeEventListener('storage', loadProjects);
+    };
   }, []);
 
   // Filter projects based on their status
