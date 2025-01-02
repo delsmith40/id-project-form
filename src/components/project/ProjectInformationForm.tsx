@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
@@ -12,6 +13,7 @@ export interface ProjectFormData {
   projectName: string;
   date: Date | undefined;
   teamMember: string;
+  status: string;
 }
 
 interface ProjectInformationFormProps {
@@ -64,6 +66,24 @@ export function ProjectInformationForm({ formData, onFormDataChange }: ProjectIn
           onChange={(e) => onFormDataChange({ ...formData, teamMember: e.target.value })}
           placeholder="Enter team member ID"
         />
+      </div>
+      <div className="space-y-2">
+        <Label>Project Status</Label>
+        <Select
+          value={formData.status}
+          onValueChange={(value) => onFormDataChange({ ...formData, status: value })}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="proposed">Proposed</SelectItem>
+            <SelectItem value="new">New</SelectItem>
+            <SelectItem value="on_hold">On Hold</SelectItem>
+            <SelectItem value="in_process">In Process</SelectItem>
+            <SelectItem value="canceled">Canceled</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

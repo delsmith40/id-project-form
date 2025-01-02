@@ -18,6 +18,7 @@ export function ProjectForm({ phase }: ProjectFormProps) {
     projectName: "",
     date: undefined,
     teamMember: "",
+    status: "proposed", // Set default status
   });
 
   useEffect(() => {
@@ -79,7 +80,7 @@ export function ProjectForm({ phase }: ProjectFormProps) {
       return;
     }
 
-    if (!formData.projectName || !formData.date || !formData.teamMember) {
+    if (!formData.projectName || !formData.date || !formData.teamMember || !formData.status) {
       toast({
         title: "Missing Information",
         description: "Please fill in all project information fields",
@@ -98,7 +99,7 @@ export function ProjectForm({ phase }: ProjectFormProps) {
   };
 
   const handleBypassSubmit = () => {
-    if (!formData.projectName || !formData.date || !formData.teamMember) {
+    if (!formData.projectName || !formData.date || !formData.teamMember || !formData.status) {
       toast({
         title: "Missing Information",
         description: "Please fill in all project information fields",
