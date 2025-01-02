@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -82,6 +81,7 @@ export function ProjectInformationForm({ formData, onFormDataChange }: ProjectIn
             <SelectItem value="on_hold">On Hold</SelectItem>
             <SelectItem value="in_process">In Process</SelectItem>
             <SelectItem value="canceled">Canceled</SelectItem>
+            <SelectItem value="completed">Completed</SelectItem>
           </SelectContent>
         </Select>
       </div>

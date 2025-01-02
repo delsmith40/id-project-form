@@ -19,7 +19,10 @@ const Index = () => {
 
   // Filter projects based on their status
   const proposedProjects = projects.filter(project => project.status === 'proposed');
-  const currentProjects = projects.filter(project => project.status === 'in_progress');
+  const newProjects = projects.filter(project => project.status === 'new');
+  const onHoldProjects = projects.filter(project => project.status === 'on_hold');
+  const inProcessProjects = projects.filter(project => project.status === 'in_process');
+  const canceledProjects = projects.filter(project => project.status === 'canceled');
   const completedProjects = projects.filter(project => project.status === 'completed');
 
   return (
@@ -48,14 +51,26 @@ const Index = () => {
             projects={proposedProjects} 
           />
           <ProjectSection 
-            title="Current Projects" 
-            projects={currentProjects} 
+            title="New Projects" 
+            projects={newProjects} 
+          />
+          <ProjectSection 
+            title="In Process Projects" 
+            projects={inProcessProjects} 
             showProgress 
+          />
+          <ProjectSection 
+            title="On Hold Projects" 
+            projects={onHoldProjects} 
           />
           <ProjectSection 
             title="Completed Projects" 
             projects={completedProjects} 
             showCompletedDate 
+          />
+          <ProjectSection 
+            title="Canceled Projects" 
+            projects={canceledProjects} 
           />
         </div>
       </div>
