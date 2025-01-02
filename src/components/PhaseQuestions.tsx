@@ -9,6 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface PhaseQuestionsProps {
   phase: string;
@@ -18,6 +19,7 @@ interface QuestionSection {
   title: string;
   questions: { id: string; text: string }[];
   details?: string;
+  timeline?: string;
 }
 
 const analyzePhaseData: QuestionSection[] = [
@@ -57,6 +59,7 @@ const analyzePhaseData: QuestionSection[] = [
       { id: "compliance", text: "Are there any legal or compliance requirements to consider?" },
     ],
     details: "Conduct surveys, interviews, and focus groups with the target audience.",
+    timeline: "1-2 weeks for meetings, data collection, and analysis.",
   },
   {
     title: "Risk Assessment",
@@ -88,35 +91,60 @@ export function PhaseQuestions({ phase }: PhaseQuestionsProps) {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <Accordion type="single" collapsible className="w-full">
-        {analyzePhaseData.map((section, index) => (
-          <AccordionItem key={section.title} value={`section-${index}`}>
-            <AccordionTrigger className="text-lg font-semibold">
-              {section.title}
-            </AccordionTrigger>
-            <AccordionContent className="space-y-4 p-4">
-              {section.details && (
-                <p className="text-sm text-muted-foreground mb-4">{section.details}</p>
-              )}
-              {section.questions.map((question) => (
-                <div key={question.id} className="space-y-2">
-                  <Label htmlFor={question.id}>{question.text}</Label>
-                  <Textarea
-                    id={question.id}
-                    value={answers[question.id] || ""}
-                    onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                    className="min-h-[100px]"
-                  />
+    <Card className="w-full animate-fade-in">
+      <CardHeader>
+        <CardTitle className="text-2xl font-bold text-phase-analyze">
+          Analyze Needs and Goals
+        </CardTitle>
+        <p className="text-sm text-muted-foreground">Timeline: 1-2 weeks</p>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <Accordion type="single" collapsible className="w-full">
+          {analyzePhaseData.map((section, index) => (
+            <AccordionItem
+              key={section.title}
+              value={`section-${index}`}
+              className="border rounded-lg mb-4 shadow-sm"
+            >
+              <AccordionTrigger className="px-4 py-3 hover:bg-muted/50 rounded-t-lg">
+                <div className="flex flex-col items-start">
+                  <span className="text-lg font-semibold">{section.title}</span>
+                  {section.timeline && (
+                    <span className="text-sm text-muted-foreground">{section.timeline}</span>
+                  )}
                 </div>
-              ))}
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
-      <Button onClick={handleSave} className="mt-4">
-        Save Answers
-      </Button>
-    </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 py-3 space-y-4">
+                {section.details && (
+                  <div className="bg-muted/50 p-3 rounded-md mb-4">
+                    <p className="text-sm text-muted-foreground">{section.details}</p>
+                  </div>
+                )}
+                {section.questions.map((question) => (
+                  <div key={question.id} className="space-y-2">
+                    <Label htmlFor={question.id} className="text-base">
+                      {question.text}
+                    </Label>
+                    <Textarea
+                      id={question.id}
+                      value={answers[question.id] || ""}
+                      onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                      className="min-h-[100px] resize-y"
+                      placeholder="Enter your answer here..."
+                    />
+                  </div>
+                ))}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+        <Button
+          onClick={handleSave}
+          className="w-full bg-phase-analyze hover:bg-phase-analyze/90"
+        >
+          Save Answers
+        </Button>
+      </CardContent>
+    </Card>
   );
 }
