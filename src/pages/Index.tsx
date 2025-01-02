@@ -2,7 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PhaseCard } from "@/components/PhaseCard";
 import { ProgressBar } from "@/components/ProgressBar";
-import { ProjectForm } from "@/components/ProjectForm";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 const phases = [
   { id: "analyze", title: "Analyze Needs and Goals", timeline: "1-2 weeks", color: "#9b87f5" },
@@ -15,7 +19,14 @@ const phases = [
 
 const Index = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [activePhase, setActivePhase] = useState("analyze");
+  const [formData, setFormData] = useState({
+    projectName: "",
+    date: "",
+    teamMember: "",
+  });
+
   const [phaseProgress, setPhaseProgress] = useState({
     analyze: 30,
     design: 20,
@@ -24,6 +35,14 @@ const Index = () => {
     evaluate: 0,
     document: 0,
   });
+
+  const handleSave = () => {
+    localStorage.setItem("projectInfo", JSON.stringify(formData));
+    toast({
+      title: "Project Information Saved",
+      description: "Your project information has been saved successfully.",
+    });
+  };
 
   const overallProgress =
     Object.values(phaseProgress).reduce((acc, curr) => acc + curr, 0) / phases.length;
@@ -41,7 +60,7 @@ const Index = () => {
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Left Sidebar */}
+          {/* Left Sidebar with Phase Cards */}
           <div className="lg:col-span-1 space-y-4">
             {phases.map((phase) => (
               <PhaseCard
@@ -57,18 +76,62 @@ const Index = () => {
           </div>
 
           {/* Main Content */}
-          <div className="lg:col-span-3 bg-white p-6 rounded-lg shadow-sm">
-            <ProjectForm phase={activePhase} />
-          </div>
-        </div>
+          <div className="lg:col-span-3">
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle>Project Information</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="projectName">Project Name</Label>
+                    <Input
+                      id="projectName"
+                      value={formData.projectName}
+                      onChange={(e) =>
+                        setFormData({ ...formData, projectName: e.target.value })
+                      }
+                      placeholder="Enter project name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="date">Date</Label>
+                    <Input
+                      id="date"
+                      type="date"
+                      value={formData.date}
+                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="teamMember">ID Team Member</Label>
+                    <Input
+                      id="teamMember"
+                      value={formData.teamMember}
+                      onChange={(e) =>
+                        setFormData({ ...formData, teamMember: e.target.value })
+                      }
+                      placeholder="Enter team member ID"
+                    />
+                  </div>
+                </div>
+                <Button onClick={handleSave} className="mt-6">
+                  Save Project Information
+                </Button>
+              </CardContent>
+            </Card>
 
-        {/* Progress Bars */}
-        <div className="mt-8 space-y-4">
-          <ProgressBar progress={overallProgress} label="Overall Progress" />
-          <ProgressBar
-            progress={phaseProgress[activePhase as keyof typeof phaseProgress]}
-            label={`${phases.find((p) => p.id === activePhase)?.title} Progress`}
-          />
+            {/* Progress Bars */}
+            <div className="space-y-4 mt-6">
+              <ProgressBar progress={overallProgress} label="Overall Progress" />
+              <ProgressBar
+                progress={phaseProgress[activePhase as keyof typeof phaseProgress]}
+                label={`${
+                  phases.find((p) => p.id === activePhase)?.title
+                } Progress`}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
