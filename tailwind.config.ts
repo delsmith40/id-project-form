@@ -66,7 +66,6 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      
       backgroundImage: {
         'grid-slate-900': "linear-gradient(to right, rgb(15 23 42 / var(--tw-bg-opacity)) 1px, transparent 1px), linear-gradient(to bottom, rgb(15 23 42 / var(--tw-bg-opacity)) 1px, transparent 1px)",
         'grid-slate-100': "linear-gradient(to right, rgb(241 245 249 / var(--tw-bg-opacity)) 1px, transparent 1px), linear-gradient(to bottom, rgb(241 245 249 / var(--tw-bg-opacity)) 1px, transparent 1px)",
@@ -84,11 +83,22 @@ export default {
           "0%": { opacity: "0", transform: "translateY(10px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        "contrast-pulse": {
+          "0%, 100%": { 
+            backgroundColor: "rgb(2 6 23)",
+            backgroundOpacity: "0.5"
+          },
+          "50%": { 
+            backgroundColor: "rgb(15 23 42)",
+            backgroundOpacity: "0.8"
+          }
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
+        "contrast-pulse": "contrast-pulse 4s ease-in-out infinite",
       },
     },
   },
