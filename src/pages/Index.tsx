@@ -1,56 +1,73 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PhaseCard } from "@/components/PhaseCard";
-import { ProgressBar } from "@/components/ProgressBar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
-import { BarChart3, CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+import { BarChart3 } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [formData, setFormData] = useState({
-    projectName: "",
-    date: undefined as Date | undefined,
-    teamMember: "",
-  });
 
-  const [phaseProgress, setPhaseProgress] = useState({
-    analyze: 30,
-    design: 20,
-    develop: 10,
-    implement: 0,
-    evaluate: 0,
-    document: 0,
-  });
+  // Sample data - in a real app, this would come from your database
+  const proposedProjects = [
+    { id: 1, title: "New Training Module", teamMember: "John Doe", date: "2024-04-01" },
+    { id: 2, title: "Employee Onboarding", teamMember: "Jane Smith", date: "2024-04-15" },
+  ];
 
-  const handleSave = () => {
-    localStorage.setItem("projectInfo", JSON.stringify({
-      ...formData,
-      date: formData.date ? formData.date.toISOString() : null,
-    }));
-    toast({
-      title: "Project Information Saved",
-      description: "Your project information has been saved successfully.",
-    });
-  };
+  const currentProjects = [
+    { id: 3, title: "Sales Training", teamMember: "Mike Johnson", date: "2024-03-01", progress: "45%" },
+    { id: 4, title: "Leadership Development", teamMember: "Sarah Wilson", date: "2024-02-15", progress: "70%" },
+  ];
 
-  const overallProgress =
-    Object.values(phaseProgress).reduce((acc, curr) => acc + curr, 0) / 6;
+  const completedProjects = [
+    { id: 5, title: "Customer Service Training", teamMember: "Tom Brown", date: "2024-01-15", completedDate: "2024-03-15" },
+    { id: 6, title: "Safety Protocols", teamMember: "Lisa Davis", date: "2024-01-01", completedDate: "2024-02-28" },
+  ];
+
+  const ProjectTable = ({ projects, showProgress = false, showCompletedDate = false }) => (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Project Title</TableHead>
+          <TableHead>Team Member</TableHead>
+          <TableHead>Start Date</TableHead>
+          {showProgress && <TableHead>Progress</TableHead>}
+          {showCompletedDate && <TableHead>Completion Date</TableHead>}
+          <TableHead>Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {projects.map((project) => (
+          <TableRow key={project.id}>
+            <TableCell className="font-medium">{project.title}</TableCell>
+            <TableCell>{project.teamMember}</TableCell>
+            <TableCell>{project.date}</TableCell>
+            {showProgress && <TableCell>{project.progress}</TableCell>}
+            {showCompletedDate && <TableCell>{project.completedDate}</TableCell>}
+            <TableCell>
+              <Button variant="outline" size="sm" onClick={() => navigate(`/project/${project.id}`)}>
+                View Details
+              </Button>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">
-            Covington Instructional Design Project Form
+            Covington Instructional Design Projects
           </h1>
           <Button
             onClick={() => navigate("/analytics")}
@@ -61,69 +78,33 @@ const Index = () => {
           </Button>
         </div>
 
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Project Information</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="projectName">Project Name</Label>
-                <Input
-                  id="projectName"
-                  value={formData.projectName}
-                  onChange={(e) =>
-                    setFormData({ ...formData, projectName: e.target.value })
-                  }
-                  placeholder="Enter project name"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Date</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !formData.date && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {formData.date ? format(formData.date, "PPP") : <span>Pick a date</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={formData.date}
-                      onSelect={(date) => setFormData({ ...formData, date })}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="teamMember">ID Team Member</Label>
-                <Input
-                  id="teamMember"
-                  value={formData.teamMember}
-                  onChange={(e) =>
-                    setFormData({ ...formData, teamMember: e.target.value })
-                  }
-                  placeholder="Enter team member ID"
-                />
-              </div>
-            </div>
-            <Button onClick={handleSave} className="mt-6">
-              Save Project Information
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="space-y-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Proposed Projects</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ProjectTable projects={proposedProjects} />
+            </CardContent>
+          </Card>
 
-        {/* Progress Bars */}
-        <div className="space-y-4 mt-6">
-          <ProgressBar progress={overallProgress} label="Overall Progress" />
+          <Card>
+            <CardHeader>
+              <CardTitle>Current Projects</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ProjectTable projects={currentProjects} showProgress />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Completed Projects</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ProjectTable projects={completedProjects} showCompletedDate />
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
