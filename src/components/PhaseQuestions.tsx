@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -71,8 +72,11 @@ const analyzePhaseData: QuestionSection[] = [
   },
 ];
 
+const phaseOrder = ["analyze", "design", "develop", "implement", "evaluate", "document"];
+
 export function PhaseQuestions({ phase }: PhaseQuestionsProps) {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [answers, setAnswers] = useState<Record<string, string>>({});
 
   const handleSave = () => {
@@ -81,6 +85,18 @@ export function PhaseQuestions({ phase }: PhaseQuestionsProps) {
       title: "Progress Saved",
       description: "Your answers have been saved successfully.",
     });
+
+    // Find the next phase and navigate to it
+    const currentPhaseIndex = phaseOrder.indexOf(phase);
+    if (currentPhaseIndex < phaseOrder.length - 1) {
+      const nextPhase = phaseOrder[currentPhaseIndex + 1];
+      navigate(`/${nextPhase}`);
+    } else {
+      toast({
+        title: "Project Complete",
+        description: "You have completed all phases of the project!",
+      });
+    }
   };
 
   const handleAnswerChange = (questionId: string, value: string) => {
@@ -142,7 +158,7 @@ export function PhaseQuestions({ phase }: PhaseQuestionsProps) {
           onClick={handleSave}
           className="w-full bg-phase-analyze hover:bg-phase-analyze/90"
         >
-          Save Answers
+          Save Answers & Continue to Next Phase
         </Button>
       </CardContent>
     </Card>
