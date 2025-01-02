@@ -1,6 +1,107 @@
-# Welcome to your Lovable project
+# Covington Instructional Design Project
 
-## Project info
+## Complete Installation Guide
+
+### Prerequisites
+
+1. Install these required software:
+   - [Node.js](https://nodejs.org/) (LTS version recommended)
+   - [Git](https://git-scm.com/downloads)
+   - A web server like [XAMPP](https://www.apachefriends.org/) (includes Apache, MySQL, and PHP)
+
+### Step-by-Step Installation
+
+#### 1. Database Setup
+1. Install XAMPP and start Apache and MySQL services
+2. Open phpMyAdmin (http://localhost/phpmyadmin)
+3. Create a new database named `covington_db`
+4. Import the database schema (will be provided in `database/schema.sql`)
+
+#### 2. Frontend Setup
+```bash
+# Clone the repository
+git clone <your-repository-url>
+
+# Navigate to project directory
+cd covington-project
+
+# Install dependencies
+npm install
+
+# Build the frontend
+npm run build
+```
+
+#### 3. Deploy to Your Server
+
+##### Using XAMPP (Windows):
+1. Copy the contents of the `dist` folder to:
+   - Windows: `C:\xampp\htdocs\covington`
+   - Linux: `/opt/lampp/htdocs/covington`
+   - Mac: `/Applications/XAMPP/htdocs/covington`
+
+2. Access your site at: `http://localhost/covington`
+
+##### Using Apache directly:
+1. Copy the contents of the `dist` folder to your Apache web root
+2. Create/modify `.htaccess` file in your web root:
+   ```apache
+   <IfModule mod_rewrite.c>
+     RewriteEngine On
+     RewriteBase /
+     RewriteRule ^index\.html$ - [L]
+     RewriteCond %{REQUEST_FILENAME} !-f
+     RewriteCond %{REQUEST_FILENAME} !-d
+     RewriteCond %{REQUEST_FILENAME} !-l
+     RewriteRule . /index.html [L]
+   </IfModule>
+   ```
+
+### Configuration
+
+1. Create a `config.js` file in the `dist` folder:
+   ```javascript
+   window.APP_CONFIG = {
+     apiUrl: 'http://localhost/api',
+     databaseName: 'covington_db'
+   };
+   ```
+
+### Troubleshooting
+
+Common issues and solutions:
+
+1. **Blank Page After Deployment**
+   - Check if all files in `dist` folder were copied correctly
+   - Verify `.htaccess` file is present and correct
+   - Check Apache error logs
+
+2. **Database Connection Issues**
+   - Verify MySQL service is running
+   - Check database credentials
+   - Confirm database name matches configuration
+
+3. **404 Errors**
+   - Verify Apache mod_rewrite is enabled
+   - Check `.htaccess` file is present
+   - Confirm all routes are correctly configured
+
+### Support
+
+If you encounter any issues:
+1. Check the browser console for errors (F12 key)
+2. Review Apache error logs
+3. Verify all services are running in XAMPP
+4. Contact system administrator for assistance
+
+### Security Notes
+
+1. Change default database passwords
+2. Keep XAMPP and all components updated
+3. Configure proper file permissions
+4. Enable HTTPS for production use
+
+## Project Information
 
 **URL**: https://lovable.dev/projects/6e38c7bd-1f98-4a91-9635-a9c0bea12019
 
