@@ -10,6 +10,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { phaseOrder } from "@/data/phaseData";
 
 interface ProjectFormProps {
   phase: string;
@@ -17,6 +19,7 @@ interface ProjectFormProps {
 
 export function ProjectForm({ phase }: ProjectFormProps) {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     projectName: "",
     date: undefined as Date | undefined,
@@ -44,6 +47,51 @@ export function ProjectForm({ phase }: ProjectFormProps) {
       title: "Progress Saved",
       description: "Your form progress has been saved successfully.",
     });
+  };
+
+  const calculatePhaseProgress = (phaseId: string) => {
+    const answers = localStorage.getItem(`${phaseId}-answers`);
+    if (!answers) return 0;
+    const parsedAnswers = JSON.parse(answers);
+    const totalQuestions = Object.keys(parsedAnswers).length;
+    const answeredQuestions = Object.values(parsedAnswers).filter(
+      (answer) => answer && String(answer).trim() !== ""
+    ).length;
+    return Math.round((answeredQuestions / totalQuestions) * 100) || 0;
+  };
+
+  const handleSubmitProject = () => {
+    // Check if all phases are completed
+    const incompletePhases = phaseOrder.filter(
+      (phase) => calculatePhaseProgress(phase) < 100
+    );
+
+    if (incompletePhases.length > 0) {
+      toast({
+        title: "Incomplete Project",
+        description: `Please complete all questions in the following phases: ${incompletePhases.join(", ")}`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if project information is filled
+    if (!formData.projectName || !formData.date || !formData.teamMember) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all project information fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Submit project
+    localStorage.setItem("projectSubmitted", "true");
+    toast({
+      title: "Project Submitted",
+      description: "Your project has been successfully submitted!",
+    });
+    navigate("/");
   };
 
   return (
@@ -98,9 +146,18 @@ export function ProjectForm({ phase }: ProjectFormProps) {
               />
             </div>
           </div>
-          <Button onClick={handleSave} className="mt-6">
-            Save Progress
-          </Button>
+          <div className="flex gap-4 mt-6">
+            <Button onClick={handleSave}>
+              Save Progress
+            </Button>
+            <Button 
+              onClick={handleSubmitProject}
+              variant="default"
+              className="bg-green-600 hover:bg-green-700"
+            >
+              Submit Project
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
