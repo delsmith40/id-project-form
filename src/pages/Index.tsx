@@ -7,7 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { BarChart3 } from "lucide-react";
+import { BarChart3, CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 const phases = [
   { id: "analyze", title: "Analyze Needs and Goals", timeline: "1-2 weeks", color: "#9b87f5" },
@@ -24,7 +28,7 @@ const Index = () => {
   const [activePhase, setActivePhase] = useState("analyze");
   const [formData, setFormData] = useState({
     projectName: "",
-    date: "",
+    date: undefined as Date | undefined,
     teamMember: "",
   });
 
@@ -38,7 +42,10 @@ const Index = () => {
   });
 
   const handleSave = () => {
-    localStorage.setItem("projectInfo", JSON.stringify(formData));
+    localStorage.setItem("projectInfo", JSON.stringify({
+      ...formData,
+      date: formData.date ? formData.date.toISOString() : null,
+    }));
     toast({
       title: "Project Information Saved",
       description: "Your project information has been saved successfully.",
@@ -105,13 +112,29 @@ const Index = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="date">Date</Label>
-                    <Input
-                      id="date"
-                      type="date"
-                      value={formData.date}
-                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                    />
+                    <Label>Date</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !formData.date && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {formData.date ? format(formData.date, "PPP") : <span>Pick a date</span>}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={formData.date}
+                          onSelect={(date) => setFormData({ ...formData, date })}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="teamMember">ID Team Member</Label>
