@@ -5,6 +5,11 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { PhaseQuestions } from "./PhaseQuestions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 
 interface ProjectFormProps {
   phase: string;
@@ -14,12 +19,15 @@ export function ProjectForm({ phase }: ProjectFormProps) {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     projectName: "",
-    date: "",
+    date: undefined as Date | undefined,
     teamMember: "",
   });
 
   const handleSave = () => {
-    localStorage.setItem("projectForm", JSON.stringify(formData));
+    localStorage.setItem("projectForm", JSON.stringify({
+      ...formData,
+      date: formData.date ? formData.date.toISOString() : null,
+    }));
     toast({
       title: "Progress Saved",
       description: "Your form progress has been saved successfully.",
@@ -44,13 +52,29 @@ export function ProjectForm({ phase }: ProjectFormProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="date">Date</Label>
-              <Input
-                id="date"
-                type="date"
-                value={formData.date}
-                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              />
+              <Label>Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !formData.date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formData.date ? format(formData.date, "PPP") : <span>Pick a date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={formData.date}
+                    onSelect={(date) => setFormData({ ...formData, date })}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
             <div className="space-y-2">
               <Label htmlFor="teamMember">ID Team Member</Label>
