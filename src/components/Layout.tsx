@@ -196,13 +196,22 @@ export function Layout({ children }: LayoutProps) {
           </SidebarContent>
         </Sidebar>
         <div className="flex-1 flex flex-col">
-          <h1 className="text-3xl font-bold text-center py-6 bg-background/80 backdrop-blur-sm border-b">
+          <h1 className="text-3xl font-bold text-center py-6 bg-background/80 backdrop-blur-sm border-b z-10 relative">
             Covington Instructional Design Project Form
           </h1>
-          <main className="flex-1 p-8 animate-contrast-pulse dark:bg-slate-950 bg-opacity-50 relative overflow-hidden">
-            <div className="absolute inset-0 bg-grid-slate-900/[0.04] dark:bg-grid-slate-100/[0.02] bg-[size:3rem_3rem] -z-10" />
-            <div className="absolute inset-0 bg-gradient-to-tr from-slate-900/30 to-slate-900/0 dark:from-slate-950/80 dark:to-slate-950/20 -z-10" />
-            {children}
+          <main className="flex-1 p-8 relative overflow-hidden">
+            <div 
+              className="absolute inset-0 bg-cover bg-center animate-ken-burns" 
+              style={{ 
+                backgroundImage: 'url("/lovable-uploads/045b8846-3861-481e-91d4-b99d5db55d3a.png")',
+                filter: 'brightness(0.3)'
+              }} 
+            />
+            <div className="absolute inset-0 bg-gradient-to-tr from-slate-950/90 to-slate-950/70" />
+            <div className="absolute inset-0 bg-grid-slate-900/[0.04] dark:bg-grid-slate-100/[0.02] bg-[size:3rem_3rem]" />
+            <div className="relative z-10">
+              {children}
+            </div>
           </main>
         </div>
       </div>

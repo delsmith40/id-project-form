@@ -92,6 +92,11 @@ export default {
             backgroundColor: "rgb(15 23 42)",
             backgroundOpacity: "0.8"
           }
+        },
+        "ken-burns": {
+          "0%": { transform: "scale(1) translate(0, 0)" },
+          "50%": { transform: "scale(1.05) translate(-1%, -1%)" },
+          "100%": { transform: "scale(1) translate(0, 0)" }
         }
       },
       animation: {
@@ -99,6 +104,7 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
         "contrast-pulse": "contrast-pulse 4s ease-in-out infinite",
+        "ken-burns": "ken-burns 20s ease-in-out infinite",
       },
     },
   },
