@@ -7,7 +7,6 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
 } from "@/components/ui/sidebar";
@@ -18,12 +17,42 @@ interface LayoutProps {
 }
 
 const phases = [
-  { id: "analyze", title: "Analyze Needs and Goals", color: "#9b87f5" },
-  { id: "design", title: "Design the Course", color: "#F97316" },
-  { id: "develop", title: "Develop Content", color: "#0EA5E9" },
-  { id: "implement", title: "Implement the Course", color: "#D946EF" },
-  { id: "evaluate", title: "Evaluate and Revise", color: "#8B5CF6" },
-  { id: "document", title: "Document and Reflect", color: "#7E69AB" },
+  { 
+    id: "analyze", 
+    title: "Analyze Needs and Goals", 
+    color: "#9b87f5",
+    summary: "Identify stakeholders, define goals, assess needs, and evaluate risks."
+  },
+  { 
+    id: "design", 
+    title: "Design the Course", 
+    color: "#F97316",
+    summary: "Develop framework, select delivery methods, and create assessments."
+  },
+  { 
+    id: "develop", 
+    title: "Develop Content", 
+    color: "#0EA5E9",
+    summary: "Create materials, conduct pilot testing, and revise content."
+  },
+  { 
+    id: "implement", 
+    title: "Implement the Course", 
+    color: "#D946EF",
+    summary: "Deliver training, provide support, and execute communication plan."
+  },
+  { 
+    id: "evaluate", 
+    title: "Evaluate and Revise", 
+    color: "#8B5CF6",
+    summary: "Gather data, analyze outcomes, and make revisions."
+  },
+  { 
+    id: "document", 
+    title: "Document and Reflect", 
+    color: "#7E69AB",
+    summary: "Document process, reflect on learnings, and transfer knowledge."
+  },
 ];
 
 export function Layout({ children }: LayoutProps) {
@@ -61,28 +90,38 @@ export function Layout({ children }: LayoutProps) {
                 <SidebarMenu>
                   {phases.map((phase) => (
                     <SidebarMenuItem key={phase.id}>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={currentPhase === phase.id}
-                        tooltip={`${calculatePhaseProgress(phase.id)}% complete`}
+                      <a
+                        href={`/${phase.id}`}
+                        className={`block w-full rounded-lg p-4 mb-3 transition-all duration-200 hover:scale-[1.02] ${
+                          currentPhase === phase.id
+                            ? "ring-2 ring-offset-2 ring-offset-background"
+                            : ""
+                        }`}
+                        style={{ 
+                          backgroundColor: phase.color,
+                          color: 'white'
+                        }}
                       >
-                        <a
-                          href={`/${phase.id}`}
-                          className="flex items-center gap-2"
-                          style={{
-                            color:
-                              currentPhase === phase.id
-                                ? phase.color
-                                : "inherit",
-                          }}
-                        >
-                          <span
-                            className="h-2 w-2 rounded-full"
-                            style={{ backgroundColor: phase.color }}
-                          />
-                          <span>{phase.title}</span>
-                        </a>
-                      </SidebarMenuButton>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <h3 className="font-semibold">{phase.title}</h3>
+                            <span className="text-sm opacity-90">
+                              {calculatePhaseProgress(phase.id)}%
+                            </span>
+                          </div>
+                          <p className="text-sm opacity-80 line-clamp-2">
+                            {phase.summary}
+                          </p>
+                          <div className="bg-white/30 h-1.5 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-white rounded-full transition-all duration-300"
+                              style={{
+                                width: `${calculatePhaseProgress(phase.id)}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </a>
                     </SidebarMenuItem>
                   ))}
                 </SidebarMenu>
