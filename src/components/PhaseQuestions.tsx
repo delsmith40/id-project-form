@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 import { Accordion } from "@/components/ui/accordion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { QuestionSection } from "./QuestionSection";
+import { UnansweredQuestions } from "./phase/UnansweredQuestions";
+import { usePhaseLogic } from "@/hooks/usePhaseLogic";
 import {
   phaseOrder,
   analyzePhaseData,
@@ -21,80 +20,7 @@ interface PhaseQuestionsProps {
 }
 
 export function PhaseQuestions({ phase }: PhaseQuestionsProps) {
-  const { toast } = useToast();
-  const navigate = useNavigate();
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-
-  // Load saved answers when component mounts
-  useEffect(() => {
-    const savedAnswers = localStorage.getItem(`${phase}-answers`);
-    if (savedAnswers) {
-      setAnswers(JSON.parse(savedAnswers));
-    }
-  }, [phase]);
-
-  const handleSave = () => {
-    // Save answers
-    localStorage.setItem(`${phase}-answers`, JSON.stringify(answers));
-
-    // Save project information
-    const projectForm = localStorage.getItem("projectForm");
-    if (projectForm) {
-      const formData = JSON.parse(projectForm);
-      const existingProjects = JSON.parse(localStorage.getItem("projects") || "[]");
-      
-      // Check if project already exists
-      const projectIndex = existingProjects.findIndex((p: any) => p.title === formData.projectName);
-      
-      const updatedProject = {
-        id: projectIndex >= 0 ? existingProjects[projectIndex].id : Date.now().toString(),
-        title: formData.projectName,
-        teamMember: formData.teamMember,
-        date: formData.date,
-        status: formData.status,
-        currentPhase: phase
-      };
-
-      if (projectIndex >= 0) {
-        // Update existing project
-        existingProjects[projectIndex] = updatedProject;
-      } else {
-        // Add new project
-        existingProjects.push(updatedProject);
-      }
-
-      localStorage.setItem("projects", JSON.stringify(existingProjects));
-    }
-
-    toast({
-      title: "Progress Saved",
-      description: "Your answers and project information have been saved successfully.",
-    });
-
-    const currentPhaseIndex = phaseOrder.indexOf(phase);
-    if (currentPhaseIndex < phaseOrder.length - 1) {
-      const nextPhase = phaseOrder[currentPhaseIndex + 1];
-      navigate(`/${nextPhase}`);
-    } else {
-      toast({
-        title: "Project Complete",
-        description: "You have completed all phases of the project!",
-      });
-    }
-  };
-
-  const handleAnswerChange = (questionId: string, value: string) => {
-    setAnswers((prev) => ({
-      ...prev,
-      [questionId]: value,
-    }));
-
-    // Save to localStorage on each change
-    localStorage.setItem(`${phase}-answers`, JSON.stringify({
-      ...answers,
-      [questionId]: value,
-    }));
-  };
+  const { answers, handleSave, handleAnswerChange } = usePhaseLogic(phase);
 
   const getPhaseData = (): PhaseData => {
     switch (phase) {
@@ -180,31 +106,7 @@ export function PhaseQuestions({ phase }: PhaseQuestionsProps) {
       </div>
 
       <div className="lg:col-span-1">
-        <Card className="w-full animate-fade-in sticky top-4">
-          <CardHeader>
-            <CardTitle className="text-xl font-bold text-red-500">
-              Unanswered Questions
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {unansweredSections.length === 0 ? (
-              <p className="text-green-500 font-medium">All questions have been answered! 🎉</p>
-            ) : (
-              unansweredSections.map((section) => (
-                <div key={section.title} className="space-y-2">
-                  <h3 className="font-semibold text-muted-foreground">{section.title}</h3>
-                  <ul className="list-disc list-inside space-y-1">
-                    {section.questions.map((question) => (
-                      <li key={question.id} className="text-sm text-red-500">
-                        {question.text}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))
-            )}
-          </CardContent>
-        </Card>
+        <UnansweredQuestions unansweredSections={unansweredSections} />
       </div>
     </div>
   );
