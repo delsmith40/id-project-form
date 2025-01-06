@@ -7,6 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
+import { ProjectForm } from "../ProjectForm";
 
 interface ProjectModalProps {
   isOpen: boolean;
@@ -23,24 +24,13 @@ export function ProjectModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-w-4xl">
         <DialogHeader>
           <DialogTitle>{selectedProject?.name || selectedProject?.title}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           {!selectedProject.projects ? (
-            <>
-              <p className="text-sm text-muted-foreground">
-                {selectedProject.description}
-              </p>
-              <p className="text-sm">Current Phase: {selectedProject.phase}</p>
-              <p className="text-sm">Completion: {selectedProject.completion}%</p>
-              <Button asChild className="w-full">
-                <Link to={`/analyze/${selectedProject.id}`}>
-                  View Project Details
-                </Link>
-              </Button>
-            </>
+            <ProjectForm phase={selectedProject.phase || "proposed"} />
           ) : (
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground">
