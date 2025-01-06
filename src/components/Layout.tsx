@@ -60,12 +60,38 @@ export function Layout({ children }: LayoutProps) {
   const calculatePhaseProgress = (phaseId: string) => {
     const answers = localStorage.getItem(`${phaseId}-answers`);
     if (!answers) return 0;
+    
     const parsedAnswers = JSON.parse(answers);
-    const totalQuestions = Object.keys(parsedAnswers).length;
     const answeredQuestions = Object.values(parsedAnswers).filter(
       (answer) => answer && String(answer).trim() !== ""
     ).length;
-    return Math.round((answeredQuestions / totalQuestions) * 100) || 0;
+
+    // Get total questions for this phase from phaseData
+    let totalQuestions = 0;
+    switch (phaseId) {
+      case "analyze":
+        totalQuestions = 16; // Sum of all questions in analyzePhaseData
+        break;
+      case "design":
+        totalQuestions = 17; // Sum of all questions in designPhaseData
+        break;
+      case "develop":
+        totalQuestions = 14; // Sum of all questions in developPhaseData
+        break;
+      case "implement":
+        totalQuestions = 17; // Sum of all questions in implementPhaseData
+        break;
+      case "evaluate":
+        totalQuestions = 14; // Sum of all questions in evaluatePhaseData
+        break;
+      case "document":
+        totalQuestions = 8; // Sum of all questions in documentPhaseData
+        break;
+      default:
+        totalQuestions = 0;
+    }
+
+    return totalQuestions > 0 ? Math.round((answeredQuestions / totalQuestions) * 100) : 0;
   };
 
   const calculateOverallProgress = () => {
