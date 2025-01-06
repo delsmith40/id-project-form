@@ -34,10 +34,41 @@ export function PhaseQuestions({ phase }: PhaseQuestionsProps) {
   }, [phase]);
 
   const handleSave = () => {
+    // Save answers
     localStorage.setItem(`${phase}-answers`, JSON.stringify(answers));
+
+    // Save project information
+    const projectForm = localStorage.getItem("projectForm");
+    if (projectForm) {
+      const formData = JSON.parse(projectForm);
+      const existingProjects = JSON.parse(localStorage.getItem("projects") || "[]");
+      
+      // Check if project already exists
+      const projectIndex = existingProjects.findIndex((p: any) => p.title === formData.projectName);
+      
+      const updatedProject = {
+        id: projectIndex >= 0 ? existingProjects[projectIndex].id : Date.now().toString(),
+        title: formData.projectName,
+        teamMember: formData.teamMember,
+        date: formData.date,
+        status: formData.status,
+        currentPhase: phase
+      };
+
+      if (projectIndex >= 0) {
+        // Update existing project
+        existingProjects[projectIndex] = updatedProject;
+      } else {
+        // Add new project
+        existingProjects.push(updatedProject);
+      }
+
+      localStorage.setItem("projects", JSON.stringify(existingProjects));
+    }
+
     toast({
       title: "Progress Saved",
-      description: "Your answers have been saved successfully.",
+      description: "Your answers and project information have been saved successfully.",
     });
 
     const currentPhaseIndex = phaseOrder.indexOf(phase);
