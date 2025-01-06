@@ -36,7 +36,7 @@ export function ProjectModal({
               <p className="text-sm">Current Phase: {selectedProject.phase}</p>
               <p className="text-sm">Completion: {selectedProject.completion}%</p>
               <Button asChild className="w-full">
-                <Link to={`/project/${selectedProject.id}`}>
+                <Link to={`/analyze/${selectedProject.id}`}>
                   View Project Details
                 </Link>
               </Button>
@@ -53,7 +53,7 @@ export function ProjectModal({
                     {project.description}
                   </p>
                   <Button asChild className="mt-2 w-full">
-                    <Link to={`/project/${project.id}`}>View Project</Link>
+                    <Link to={`/analyze/${project.id}`}>View Project</Link>
                   </Button>
                 </Card>
               ))}
