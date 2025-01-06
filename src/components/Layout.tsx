@@ -1,5 +1,4 @@
 import { useLocation } from "react-router-dom";
-import { ProgressBar } from "./ProgressBar";
 import {
   Sidebar,
   SidebarContent,
@@ -7,9 +6,9 @@ import {
 } from "@/components/ui/sidebar";
 import { phaseOrder } from "@/data/phaseData";
 import { NavigationMenu } from "./layout/NavigationMenu";
-import { DeleteProjectButton } from "./layout/DeleteProjectButton";
 import { AnimatedBackground } from "./layout/AnimatedBackground";
 import { Header } from "./layout/Header";
+import { ProgressSection } from "./layout/ProgressSection";
 
 const phases = [
   { 
@@ -87,17 +86,11 @@ export function Layout({ children }: LayoutProps) {
               currentPhase={currentPhase}
               calculatePhaseProgress={calculatePhaseProgress}
             />
-            <div className="px-4 py-2 space-y-4">
-              <ProgressBar
-                progress={calculatePhaseProgress(currentPhase)}
-                label="Phase Progress"
-              />
-              <ProgressBar
-                progress={calculateOverallProgress()}
-                label="Overall Progress"
-              />
-              <DeleteProjectButton />
-            </div>
+            <ProgressSection
+              currentPhase={currentPhase}
+              calculatePhaseProgress={calculatePhaseProgress}
+              calculateOverallProgress={calculateOverallProgress}
+            />
           </SidebarContent>
         </Sidebar>
         <div className="flex-1 flex flex-col">
