@@ -18,6 +18,7 @@ const AnalyticsPage = () => {
           const parsedProjects = JSON.parse(storedProjects);
           const transformedProjects = parsedProjects.map(project => ({
             name: project.title,
+            title: project.title,
             completion: project.status === 'completed' ? 100 : 
                        project.status === 'in_process' ? 50 :
                        project.status === 'on_hold' ? 30 :
@@ -25,7 +26,7 @@ const AnalyticsPage = () => {
                        project.status === 'proposed' ? 5 : 0,
             phase: project.status,
             id: project.id,
-            description: `Team Member: ${project.teamMember}, Status: ${project.status}`,
+            description: project.description || `Status: ${project.status}`,
           }));
           setProjectData(transformedProjects);
         }

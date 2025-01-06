@@ -25,7 +25,7 @@ export function ProjectModal({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{selectedProject?.name}</DialogTitle>
+          <DialogTitle>{selectedProject?.name || selectedProject?.title}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           {!selectedProject.projects ? (
@@ -44,11 +44,11 @@ export function ProjectModal({
           ) : (
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                {selectedProject?.description}
+                Projects in {selectedProject?.name}
               </p>
               {selectedProject?.projects?.map((project: any) => (
                 <Card key={project.id} className="p-4">
-                  <h3 className="font-medium">{project.name}</h3>
+                  <h3 className="font-medium">{project.name || project.title}</h3>
                   <p className="text-sm text-muted-foreground">
                     {project.description}
                   </p>
