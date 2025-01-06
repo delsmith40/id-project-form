@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,22 +33,49 @@ const AnalyticsPage = () => {
   const [phaseFilter, setPhaseFilter] = useState("all");
   const [selectedProject, setSelectedProject] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [projectData, setProjectData] = useState([]);
 
-  // In a real application, this would come from your database
-  const projectData = [
-    { name: "Project A", completion: 75, phase: "design", id: 1, description: "A design project focusing on user interface" },
-    { name: "Project B", completion: 30, phase: "analyze", id: 2, description: "Analysis of learning needs" },
-    { name: "Project C", completion: 100, phase: "document", id: 3, description: "Documentation of training materials" },
-    { name: "Project D", completion: 50, phase: "develop", id: 4, description: "Development of e-learning modules" },
-  ];
+  useEffect(() => {
+    const loadProjects = () => {
+      try {
+        const storedProjects = localStorage.getItem('projects');
+        if (storedProjects) {
+          const parsedProjects = JSON.parse(storedProjects);
+          // Transform the data to match the chart format
+          const transformedProjects = parsedProjects.map(project => ({
+            name: project.title,
+            completion: project.status === 'completed' ? 100 : 
+                       project.status === 'in_process' ? 50 :
+                       project.status === 'on_hold' ? 30 :
+                       project.status === 'new' ? 10 :
+                       project.status === 'proposed' ? 5 : 0,
+            phase: project.status,
+            id: project.id,
+            description: `Team Member: ${project.teamMember}, Status: ${project.status}`,
+          }));
+          setProjectData(transformedProjects);
+        }
+      } catch (error) {
+        console.error('Error loading projects:', error);
+        setProjectData([]);
+      }
+    };
+
+    loadProjects();
+    window.addEventListener('storage', loadProjects);
+    
+    return () => {
+      window.removeEventListener('storage', loadProjects);
+    };
+  }, []);
 
   const phaseData = [
-    { phase: "Analyze", count: 5 },
-    { phase: "Design", count: 8 },
-    { phase: "Develop", count: 12 },
-    { phase: "Implement", count: 6 },
-    { phase: "Evaluate", count: 4 },
-    { phase: "Document", count: 3 },
+    { phase: "Proposed", count: projectData.filter(p => p.phase === "proposed").length },
+    { phase: "New", count: projectData.filter(p => p.phase === "new").length },
+    { phase: "In Process", count: projectData.filter(p => p.phase === "in_process").length },
+    { phase: "On Hold", count: projectData.filter(p => p.phase === "on_hold").length },
+    { phase: "Canceled", count: projectData.filter(p => p.phase === "canceled").length },
+    { phase: "Completed", count: projectData.filter(p => p.phase === "completed").length },
   ];
 
   const filteredProjects = projectData.filter(
@@ -79,6 +106,8 @@ const AnalyticsPage = () => {
     }
   };
 
+  // ... keep existing code (JSX for the UI components remains the same)
+
   return (
     <div className="space-y-8 p-6">
       <div className="flex flex-col md:flex-row gap-4 items-end">
@@ -102,12 +131,12 @@ const AnalyticsPage = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Phases</SelectItem>
-              <SelectItem value="analyze">Analyze</SelectItem>
-              <SelectItem value="design">Design</SelectItem>
-              <SelectItem value="develop">Develop</SelectItem>
-              <SelectItem value="implement">Implement</SelectItem>
-              <SelectItem value="evaluate">Evaluate</SelectItem>
-              <SelectItem value="document">Document</SelectItem>
+              <SelectItem value="proposed">Proposed</SelectItem>
+              <SelectItem value="new">New</SelectItem>
+              <SelectItem value="in_process">In Process</SelectItem>
+              <SelectItem value="on_hold">On Hold</SelectItem>
+              <SelectItem value="canceled">Canceled</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
             </SelectContent>
           </Select>
         </div>
