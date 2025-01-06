@@ -18,7 +18,7 @@ export function ProjectForm({ phase }: ProjectFormProps) {
     projectName: "",
     date: undefined,
     teamMember: "",
-    status: "proposed", // Set default status
+    status: "proposed",
   });
 
   useEffect(() => {
@@ -63,7 +63,7 @@ export function ProjectForm({ phase }: ProjectFormProps) {
       projectName: "",
       date: undefined,
       teamMember: "",
-      status: "proposed", // Include status when resetting form data
+      status: "proposed",
     });
   };
 
@@ -90,8 +90,20 @@ export function ProjectForm({ phase }: ProjectFormProps) {
       return;
     }
 
+    // Save the project to localStorage
+    const existingProjects = JSON.parse(localStorage.getItem("projects") || "[]");
+    const newProject = {
+      id: Date.now().toString(), // Generate a unique ID
+      title: formData.projectName,
+      teamMember: formData.teamMember,
+      date: formData.date.toISOString(),
+      status: formData.status,
+    };
+    
+    localStorage.setItem("projects", JSON.stringify([...existingProjects, newProject]));
     localStorage.setItem("projectSubmitted", "true");
     clearAllFormData();
+    
     toast({
       title: "Project Submitted",
       description: "Your project has been successfully submitted!",
@@ -109,8 +121,20 @@ export function ProjectForm({ phase }: ProjectFormProps) {
       return;
     }
 
+    // Save the project to localStorage even in bypass mode
+    const existingProjects = JSON.parse(localStorage.getItem("projects") || "[]");
+    const newProject = {
+      id: Date.now().toString(),
+      title: formData.projectName,
+      teamMember: formData.teamMember,
+      date: formData.date.toISOString(),
+      status: formData.status,
+    };
+    
+    localStorage.setItem("projects", JSON.stringify([...existingProjects, newProject]));
     localStorage.setItem("projectSubmitted", "true");
     clearAllFormData();
+
     toast({
       title: "Project Submitted (Bypass Mode)",
       description: "Your project has been submitted without completion checks!",
