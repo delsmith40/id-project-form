@@ -7,14 +7,10 @@ const Index = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] max-w-2xl mx-auto px-4">
-      <h1 className="text-4xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-orange-500">
-        Covington Instructional Design Projects
-      </h1>
-
       <div className="w-full max-w-md space-y-8">
         <Button
           onClick={() => navigate("/analyze")}
-          className="w-full py-8 text-xl bg-blue-600 hover:bg-blue-700"
+          className="w-full py-8 text-xl bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
         >
           Project Request
           <span className="text-sm ml-2">(Customer Form)</span>
@@ -28,7 +24,7 @@ const Index = () => {
               localStorage.clear(); // Clear any existing project data
             }}
             size="lg"
-            className="w-full py-6 text-lg bg-blue-600 hover:bg-blue-700"
+            className="w-full py-6 text-lg bg-phase-analyze hover:bg-phase-analyze/90"
           >
             <FilePlus className="mr-2 h-6 w-6" />
             Start a New Project
@@ -37,7 +33,7 @@ const Index = () => {
           <Button
             onClick={() => navigate("/analytics")}
             size="lg"
-            className="w-full py-6 text-lg bg-blue-600 hover:bg-blue-700"
+            className="w-full py-6 text-lg bg-phase-develop hover:bg-phase-develop/90"
           >
             <BarChart3 className="mr-2 h-6 w-6" />
             Analytics
@@ -46,7 +42,7 @@ const Index = () => {
           <Button
             onClick={() => navigate("/")}
             size="lg"
-            className="w-full py-6 text-lg bg-blue-600 hover:bg-blue-700"
+            className="w-full py-6 text-lg bg-phase-document hover:bg-phase-document/90"
           >
             <ListFilter className="mr-2 h-6 w-6" />
             Project Lists
