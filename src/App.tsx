@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import Index from "./pages/Index";
 import AnalyzePage from "./pages/AnalyzePage";
@@ -15,7 +15,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route element={<Layout><Outlet /></Layout>}>
           <Route index element={<Index />} />
           <Route path="analyze" element={<AnalyzePage />} />
           <Route path="design" element={<DesignPage />} />
