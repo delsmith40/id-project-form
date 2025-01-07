@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { BarChart3, FileSpreadsheet, FilePlus } from "lucide-react";
+import { BarChart3, FileSpreadsheet, FilePlus, ListFilter } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -17,10 +17,11 @@ const Index = () => {
           className="w-full py-8 text-xl bg-blue-600 hover:bg-blue-700"
         >
           Project Request
+          <span className="text-sm ml-2">(Customer Form)</span>
           <FileSpreadsheet className="ml-2 h-6 w-6" />
         </Button>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+        <div className="grid grid-cols-3 gap-4 w-full">
           <Button
             onClick={() => {
               navigate("/analyze");
@@ -30,7 +31,7 @@ const Index = () => {
             className="w-full py-6 text-lg bg-blue-600 hover:bg-blue-700"
           >
             <FilePlus className="mr-2 h-6 w-6" />
-            Start New Project
+            Start a New Project
           </Button>
 
           <Button
@@ -40,6 +41,15 @@ const Index = () => {
           >
             <BarChart3 className="mr-2 h-6 w-6" />
             Analytics
+          </Button>
+
+          <Button
+            onClick={() => navigate("/")}
+            size="lg"
+            className="w-full py-6 text-lg bg-blue-600 hover:bg-blue-700"
+          >
+            <ListFilter className="mr-2 h-6 w-6" />
+            Project Lists
           </Button>
         </div>
       </div>
