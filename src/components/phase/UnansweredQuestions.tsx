@@ -23,9 +23,9 @@ export function UnansweredQuestions({ unansweredSections }: UnansweredQuestionsP
           unansweredSections.map((section) => (
             <div key={section.title} className="space-y-2">
               <h3 className="font-semibold text-muted-foreground">{section.title}</h3>
-              <ul className="list-disc list-inside space-y-1">
+              <ul className="list-disc pl-6 space-y-1">
                 {section.questions.map((question) => (
-                  <li key={question.id} className="text-sm text-red-500">
+                  <li key={question.id} className="text-sm text-red-500 text-left">
                     {question.text}
                   </li>
                 ))}
