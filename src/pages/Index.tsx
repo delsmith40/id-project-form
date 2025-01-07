@@ -6,8 +6,8 @@ const Index = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] max-w-2xl mx-auto px-4">
-      <div className="w-full max-w-md space-y-8">
+    <div className="flex flex-col items-center justify-center min-h-[80vh] max-w-4xl mx-auto px-6">
+      <div className="w-full space-y-8">
         <Button
           onClick={() => navigate("/analyze")}
           className="w-full py-8 text-xl bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
@@ -17,14 +17,14 @@ const Index = () => {
           <FileSpreadsheet className="ml-2 h-6 w-6" />
         </Button>
 
-        <div className="grid grid-cols-3 gap-4 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
           <Button
             onClick={() => {
               navigate("/analyze");
-              localStorage.clear(); // Clear any existing project data
+              localStorage.clear();
             }}
             size="lg"
-            className="w-full py-6 text-lg bg-phase-analyze hover:bg-phase-analyze/90"
+            className="w-full py-6 text-base md:text-lg bg-phase-analyze hover:bg-phase-analyze/90"
           >
             <FilePlus className="mr-2 h-6 w-6" />
             Start a New Project
@@ -33,7 +33,7 @@ const Index = () => {
           <Button
             onClick={() => navigate("/analytics")}
             size="lg"
-            className="w-full py-6 text-lg bg-phase-develop hover:bg-phase-develop/90"
+            className="w-full py-6 text-base md:text-lg bg-phase-develop hover:bg-phase-develop/90"
           >
             <BarChart3 className="mr-2 h-6 w-6" />
             Analytics
@@ -42,7 +42,7 @@ const Index = () => {
           <Button
             onClick={() => navigate("/")}
             size="lg"
-            className="w-full py-6 text-lg bg-phase-document hover:bg-phase-document/90"
+            className="w-full py-6 text-base md:text-lg bg-phase-document hover:bg-phase-document/90"
           >
             <ListFilter className="mr-2 h-6 w-6" />
             Project Lists
