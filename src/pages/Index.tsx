@@ -10,7 +10,7 @@ const Index = () => {
       <div className="w-full space-y-8">
         <Button
           onClick={() => navigate("/analyze")}
-          className="w-full py-8 text-xl bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+          className="w-full py-8 text-xl bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 transform transition-all duration-200 hover:scale-[1.02] active:scale-95 animate-fade-in"
         >
           Project Request
           <span className="text-sm ml-2">(Customer Form)</span>
@@ -24,7 +24,7 @@ const Index = () => {
               localStorage.clear();
             }}
             size="lg"
-            className="w-full py-6 text-base md:text-lg bg-phase-analyze hover:bg-phase-analyze/90"
+            className="w-full py-6 text-base md:text-lg bg-phase-analyze hover:bg-phase-analyze/90 transform transition-all duration-200 hover:scale-105 active:scale-95 animate-fade-in"
           >
             <FilePlus className="mr-2 h-6 w-6" />
             Start a New Project
@@ -33,7 +33,7 @@ const Index = () => {
           <Button
             onClick={() => navigate("/analytics")}
             size="lg"
-            className="w-full py-6 text-base md:text-lg bg-phase-develop hover:bg-phase-develop/90"
+            className="w-full py-6 text-base md:text-lg bg-phase-develop hover:bg-phase-develop/90 transform transition-all duration-200 hover:scale-105 active:scale-95 animate-fade-in delay-100"
           >
             <BarChart3 className="mr-2 h-6 w-6" />
             Analytics
@@ -42,7 +42,7 @@ const Index = () => {
           <Button
             onClick={() => navigate("/")}
             size="lg"
-            className="w-full py-6 text-base md:text-lg bg-phase-document hover:bg-phase-document/90"
+            className="w-full py-6 text-base md:text-lg bg-phase-document hover:bg-phase-document/90 transform transition-all duration-200 hover:scale-105 active:scale-95 animate-fade-in delay-200"
           >
             <ListFilter className="mr-2 h-6 w-6" />
             Project Lists
