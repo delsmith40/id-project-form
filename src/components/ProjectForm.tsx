@@ -4,6 +4,7 @@ import { ProjectInformationForm } from "./project/ProjectInformationForm";
 import { ProjectSubmissionButtons } from "./project/ProjectSubmissionButtons";
 import { useProjectFormLogic } from "./project/ProjectFormLogic";
 import { Form } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
 
 interface ProjectFormProps {
   phase: string;
@@ -18,14 +19,15 @@ export function ProjectForm({ phase }: ProjectFormProps) {
     handleBypassSubmit,
   } = useProjectFormLogic();
 
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm();
+
+  const onSubmit = () => {
     handleSave();
   };
 
   return (
-    <Form onSubmit={handleFormSubmit}>
-      <div className="space-y-8 max-w-5xl mx-auto">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-5xl mx-auto">
         <Card className="animate-fade-in">
           <CardHeader>
             <CardTitle>Project Information</CardTitle>
@@ -49,7 +51,7 @@ export function ProjectForm({ phase }: ProjectFormProps) {
             />
           </CardContent>
         </Card>
-      </div>
+      </form>
     </Form>
   );
 }
