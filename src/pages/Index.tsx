@@ -40,7 +40,7 @@ const Index = () => {
           </Button>
 
           <Button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/projects-list")}
             size="lg"
             className="w-full py-6 text-base md:text-lg bg-phase-document hover:bg-phase-document/90 transform transition-all duration-200 hover:scale-105 active:scale-95 animate-fade-in delay-200"
           >
