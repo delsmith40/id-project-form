@@ -7,7 +7,6 @@ import {
 import { NavigationMenu } from "./layout/NavigationMenu";
 import { AnimatedBackground } from "./layout/AnimatedBackground";
 import { Header } from "./layout/Header";
-import { ProgressOverview } from "./progress/ProgressOverview";
 import { phases } from "./phases/phaseConfig";
 import { useProgress } from "@/hooks/useProgress";
 
@@ -29,11 +28,6 @@ export function Layout({ children }: LayoutProps) {
               phases={phases}
               currentPhase={currentPhase}
               calculatePhaseProgress={calculatePhaseProgress}
-            />
-            <ProgressOverview
-              currentPhase={currentPhase}
-              calculatePhaseProgress={calculatePhaseProgress}
-              calculateOverallProgress={calculateOverallProgress}
             />
           </SidebarContent>
         </Sidebar>
