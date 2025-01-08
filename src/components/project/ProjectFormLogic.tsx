@@ -11,6 +11,7 @@ export function useProjectFormLogic() {
     projectName: "",
     date: undefined,
     teamMember: "",
+    projectOwner: "",
     status: "proposed",
   });
 
@@ -56,6 +57,7 @@ export function useProjectFormLogic() {
       projectName: "",
       date: undefined,
       teamMember: "",
+      projectOwner: "",
       status: "proposed",
     });
   };
@@ -74,7 +76,7 @@ export function useProjectFormLogic() {
       return;
     }
 
-    if (!formData.projectName || !formData.date || !formData.teamMember || !formData.status) {
+    if (!formData.projectName || !formData.date || !formData.teamMember || !formData.projectOwner || !formData.status) {
       toast({
         title: "Missing Information",
         description: "Please fill in all project information fields",
@@ -88,6 +90,7 @@ export function useProjectFormLogic() {
       id: Date.now().toString(),
       title: formData.projectName,
       teamMember: formData.teamMember,
+      projectOwner: formData.projectOwner,
       date: formData.date.toISOString(),
       status: formData.status,
     };
@@ -104,7 +107,7 @@ export function useProjectFormLogic() {
   };
 
   const handleBypassSubmit = () => {
-    if (!formData.projectName || !formData.date || !formData.teamMember || !formData.status) {
+    if (!formData.projectName || !formData.date || !formData.teamMember || !formData.projectOwner || !formData.status) {
       toast({
         title: "Missing Information",
         description: "Please fill in all project information fields",
@@ -118,6 +121,7 @@ export function useProjectFormLogic() {
       id: Date.now().toString(),
       title: formData.projectName,
       teamMember: formData.teamMember,
+      projectOwner: formData.projectOwner,
       date: formData.date.toISOString(),
       status: formData.status,
     };

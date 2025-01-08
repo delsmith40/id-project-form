@@ -12,6 +12,7 @@ export interface ProjectFormData {
   projectName: string;
   date: Date | undefined;
   teamMember: string;
+  projectOwner: string;
   status: string;
 }
 
@@ -64,6 +65,15 @@ export function ProjectInformationForm({ formData, onFormDataChange }: ProjectIn
           value={formData.teamMember}
           onChange={(e) => onFormDataChange({ ...formData, teamMember: e.target.value })}
           placeholder="Enter team member ID"
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="projectOwner">Project Owner</Label>
+        <Input
+          id="projectOwner"
+          value={formData.projectOwner}
+          onChange={(e) => onFormDataChange({ ...formData, projectOwner: e.target.value })}
+          placeholder="Enter project owner"
         />
       </div>
       <div className="space-y-2">
