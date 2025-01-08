@@ -6,14 +6,12 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BasicInfoSection } from "./instructional/BasicInfoSection";
 import { CapaSection } from "./instructional/CapaSection";
 import { FormData } from "./instructional/types";
+import { DatePicker } from "@/components/ui/date-picker";
 
 export function InstructionalDesignForm({ onClose }: { onClose: () => void }) {
   const { toast } = useToast();
@@ -22,7 +20,6 @@ export function InstructionalDesignForm({ onClose }: { onClose: () => void }) {
   const sendEmailReceipt = watch("sendEmailReceipt");
 
   const onSubmit = (data: FormData) => {
-    console.log(data);
     if (data.sendEmailReceipt && !data.email) {
       toast({
         title: "Email Required",
@@ -32,7 +29,6 @@ export function InstructionalDesignForm({ onClose }: { onClose: () => void }) {
       return;
     }
     
-    // Send email using default email client
     if (data.sendEmailReceipt && data.email) {
       const subject = encodeURIComponent("Instructional Design Request Form Submission");
       const body = encodeURIComponent(`
@@ -57,8 +53,8 @@ Technical Approver: ${data.technicalApprover}
 
   return (
     <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">2025 Instructional Design Request Form</CardTitle>
+      <CardHeader className="text-center">
+        <CardTitle className="text-2xl font-bold">Instructional Design Request Form</CardTitle>
         <p className="text-sm text-muted-foreground mt-2">
           Thank you for your interest in working with the Instructional Design team! To help us serve you better, please complete all fields in this form. Once submitted, a team member will review your request and get back to you within 48 hours.
         </p>
@@ -72,32 +68,13 @@ Technical Approver: ${data.technicalApprover}
             <Label className="text-base">
               What is the desired completion date? <span className="text-red-500">*</span>
             </Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                  type="button"
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "PPP") : <span>Pick a date</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={(newDate) => {
-                    setDate(newDate);
-                    setValue("completionDate", newDate);
-                  }}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+            <DatePicker
+              date={date}
+              setDate={(newDate) => {
+                setDate(newDate);
+                setValue("completionDate", newDate);
+              }}
+            />
           </div>
 
           <div>
