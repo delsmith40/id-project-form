@@ -5,6 +5,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { useState } from "react";
 
 interface RequestDetailsDialogProps {
@@ -35,7 +38,7 @@ export function RequestDetailsDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {mode === "view" ? "Request Details" : "Edit Request"}
@@ -43,13 +46,13 @@ export function RequestDetailsDialog({
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <label className="text-sm font-medium">Name & Department</label>
+            <Label className="text-sm font-medium">Name & Department</Label>
             {mode === "view" ? (
               <p className="mt-1">{formData.nameAndDepartment}</p>
             ) : (
-              <input
+              <Input
                 type="text"
-                className="w-full mt-1 p-2 border rounded"
+                className="w-full mt-1.5"
                 value={formData.nameAndDepartment}
                 onChange={(e) =>
                   setFormData({ ...formData, nameAndDepartment: e.target.value })
@@ -57,14 +60,15 @@ export function RequestDetailsDialog({
               />
             )}
           </div>
+
           <div>
-            <label className="text-sm font-medium">Topic</label>
+            <Label className="text-sm font-medium">Topic</Label>
             {mode === "view" ? (
               <p className="mt-1">{formData.topic}</p>
             ) : (
-              <input
+              <Input
                 type="text"
-                className="w-full mt-1 p-2 border rounded"
+                className="w-full mt-1.5"
                 value={formData.topic}
                 onChange={(e) =>
                   setFormData({ ...formData, topic: e.target.value })
@@ -72,14 +76,15 @@ export function RequestDetailsDialog({
               />
             )}
           </div>
+
           <div>
-            <label className="text-sm font-medium">Target Audience</label>
+            <Label className="text-sm font-medium">Target Audience</Label>
             {mode === "view" ? (
               <p className="mt-1">{formData.targetAudience}</p>
             ) : (
-              <input
+              <Input
                 type="text"
-                className="w-full mt-1 p-2 border rounded"
+                className="w-full mt-1.5"
                 value={formData.targetAudience}
                 onChange={(e) =>
                   setFormData({ ...formData, targetAudience: e.target.value })
@@ -87,17 +92,97 @@ export function RequestDetailsDialog({
               />
             )}
           </div>
+
           <div>
-            <label className="text-sm font-medium">CAPA Related</label>
-            <p className="mt-1">{formData.isCapaRelated}</p>
+            <Label className="text-sm font-medium">CAPA Related</Label>
+            {mode === "view" ? (
+              <p className="mt-1">{formData.isCapaRelated}</p>
+            ) : (
+              <RadioGroup
+                value={formData.isCapaRelated}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, isCapaRelated: value })
+                }
+                className="flex items-center space-x-4 mt-1.5"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="yes" id="capaYes" />
+                  <Label htmlFor="capaYes">Yes</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="no" id="capaNo" />
+                  <Label htmlFor="capaNo">No</Label>
+                </div>
+              </RadioGroup>
+            )}
           </div>
+
           <div>
-            <label className="text-sm font-medium">Completion Date</label>
-            <p className="mt-1">
-              {formData.completionDate
-                ? new Date(formData.completionDate).toLocaleDateString()
-                : "Not specified"}
-            </p>
+            <Label className="text-sm font-medium">Completion Date</Label>
+            {mode === "view" ? (
+              <p className="mt-1">
+                {formData.completionDate
+                  ? new Date(formData.completionDate).toLocaleDateString()
+                  : "Not specified"}
+              </p>
+            ) : (
+              <Input
+                type="date"
+                className="w-full mt-1.5"
+                value={formData.completionDate ? new Date(formData.completionDate).toISOString().split('T')[0] : ''}
+                onChange={(e) =>
+                  setFormData({ ...formData, completionDate: new Date(e.target.value) })
+                }
+              />
+            )}
+          </div>
+
+          <div>
+            <Label className="text-sm font-medium">Subject Matter Expert</Label>
+            {mode === "view" ? (
+              <p className="mt-1">{formData.subjectMatterExpert || "Not specified"}</p>
+            ) : (
+              <Input
+                type="text"
+                className="w-full mt-1.5"
+                value={formData.subjectMatterExpert || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, subjectMatterExpert: e.target.value })
+                }
+              />
+            )}
+          </div>
+
+          <div>
+            <Label className="text-sm font-medium">Document Owner</Label>
+            {mode === "view" ? (
+              <p className="mt-1">{formData.documentOwner || "Not specified"}</p>
+            ) : (
+              <Input
+                type="text"
+                className="w-full mt-1.5"
+                value={formData.documentOwner || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, documentOwner: e.target.value })
+                }
+              />
+            )}
+          </div>
+
+          <div>
+            <Label className="text-sm font-medium">Technical Approver</Label>
+            {mode === "view" ? (
+              <p className="mt-1">{formData.technicalApprover || "Not specified"}</p>
+            ) : (
+              <Input
+                type="text"
+                className="w-full mt-1.5"
+                value={formData.technicalApprover || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, technicalApprover: e.target.value })
+                }
+              />
+            )}
           </div>
         </div>
         <div className="flex justify-end space-x-2 mt-4">
