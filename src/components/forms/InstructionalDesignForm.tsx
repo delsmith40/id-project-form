@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
 import { BasicInfoSection } from "./instructional/BasicInfoSection";
 import { CapaSection } from "./instructional/CapaSection";
 import { FormData } from "./instructional/types";
@@ -27,6 +26,10 @@ export function InstructionalDesignForm({ onClose }: { onClose: () => void }) {
       });
       return;
     }
+    
+    // Save to localStorage
+    const existingRequests = JSON.parse(localStorage.getItem("instructionalRequests") || "[]");
+    localStorage.setItem("instructionalRequests", JSON.stringify([...existingRequests, data]));
     
     if (data.sendEmailReceipt && data.email) {
       const subject = encodeURIComponent("Instructional Design Request Form Submission");
