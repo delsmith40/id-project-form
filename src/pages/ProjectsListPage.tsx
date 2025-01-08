@@ -1,16 +1,53 @@
 import { ProjectSection } from "@/components/index/ProjectSection";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { MoreVertical } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useToast } from "@/components/ui/use-toast";
 
 const ProjectsListPage = () => {
   // Get projects from localStorage
   const projects = JSON.parse(localStorage.getItem("projects") || "[]");
   const instructionalRequests = JSON.parse(localStorage.getItem("instructionalRequests") || "[]");
+  const { toast } = useToast();
 
   // Group projects by status
   const proposedProjects = projects.filter((p: any) => p.status === "proposed");
   const inProgressProjects = projects.filter((p: any) => p.status === "in_progress");
   const completedProjects = projects.filter((p: any) => p.status === "completed");
+
+  const handleDelete = (index: number) => {
+    const updatedRequests = [...instructionalRequests];
+    updatedRequests.splice(index, 1);
+    localStorage.setItem("instructionalRequests", JSON.stringify(updatedRequests));
+    toast({
+      title: "Request Deleted",
+      description: "The instructional design request has been deleted.",
+    });
+    window.location.reload();
+  };
+
+  const handleEdit = (request: any) => {
+    // For now, we'll just show a toast. You can implement the edit functionality later
+    toast({
+      title: "Edit Request",
+      description: "Edit functionality will be implemented soon.",
+    });
+  };
+
+  const handleView = (request: any) => {
+    // For now, we'll just show a toast with the request details
+    toast({
+      title: "Request Details",
+      description: `${request.nameAndDepartment} - ${request.topic}`,
+    });
+  };
 
   return (
     <div className="container mx-auto py-8 space-y-8">
@@ -28,6 +65,7 @@ const ProjectsListPage = () => {
                   <TableHead>Target Audience</TableHead>
                   <TableHead>CAPA Related</TableHead>
                   <TableHead>Completion Date</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -39,6 +77,29 @@ const ProjectsListPage = () => {
                     <TableCell>{request.isCapaRelated}</TableCell>
                     <TableCell>
                       {request.completionDate ? new Date(request.completionDate).toLocaleDateString() : 'Not specified'}
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleView(request)}>
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleEdit(request)}>
+                            Edit Request
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-red-600"
+                            onClick={() => handleDelete(index)}
+                          >
+                            Delete Request
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}
