@@ -8,6 +8,8 @@ import {
   SidebarMenuItem,
   SidebarMenu,
 } from "@/components/ui/sidebar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ProgressBar } from "../ProgressBar";
 
 interface Phase {
   id: string;
@@ -25,6 +27,14 @@ interface NavigationMenuProps {
 export function NavigationMenu({ phases, currentPhase, calculatePhaseProgress }: NavigationMenuProps) {
   const navigate = useNavigate();
 
+  const calculateOverallProgress = () => {
+    const progress = phaseOrder.reduce(
+      (acc, phase) => acc + calculatePhaseProgress(phase),
+      0
+    );
+    return Math.round(progress / phaseOrder.length);
+  };
+
   return (
     <SidebarGroup>
       <SidebarMenuItem>
@@ -36,6 +46,23 @@ export function NavigationMenu({ phases, currentPhase, calculatePhaseProgress }:
           <span className="font-semibold">Home</span>
         </button>
       </SidebarMenuItem>
+
+      <Card className="mb-6 bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm border-white/20">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg">Progress Overview</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <ProgressBar
+            progress={calculatePhaseProgress(currentPhase)}
+            label="Phase Progress"
+          />
+          <ProgressBar
+            progress={calculateOverallProgress()}
+            label="Overall Progress"
+          />
+        </CardContent>
+      </Card>
+
       <SidebarGroupLabel>Project Phases</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>

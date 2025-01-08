@@ -8,7 +8,8 @@ import { phaseOrder } from "@/data/phaseData";
 import { NavigationMenu } from "./layout/NavigationMenu";
 import { AnimatedBackground } from "./layout/AnimatedBackground";
 import { Header } from "./layout/Header";
-import { ProgressSection } from "./layout/ProgressSection";
+import { ProgressBar } from "../ProgressBar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const phases = [
   { 
@@ -66,26 +67,25 @@ export function Layout({ children }: LayoutProps) {
       (answer) => answer && String(answer).trim() !== ""
     ).length;
 
-    // Get total questions for this phase from phaseData
     let totalQuestions = 0;
     switch (phaseId) {
       case "analyze":
-        totalQuestions = 16; // Sum of all questions in analyzePhaseData
+        totalQuestions = 16;
         break;
       case "design":
-        totalQuestions = 17; // Sum of all questions in designPhaseData
+        totalQuestions = 17;
         break;
       case "develop":
-        totalQuestions = 14; // Sum of all questions in developPhaseData
+        totalQuestions = 14;
         break;
       case "implement":
-        totalQuestions = 17; // Sum of all questions in implementPhaseData
+        totalQuestions = 17;
         break;
       case "evaluate":
-        totalQuestions = 14; // Sum of all questions in evaluatePhaseData
+        totalQuestions = 14;
         break;
       case "document":
-        totalQuestions = 8; // Sum of all questions in documentPhaseData
+        totalQuestions = 8;
         break;
       default:
         totalQuestions = 0;
@@ -112,11 +112,21 @@ export function Layout({ children }: LayoutProps) {
               currentPhase={currentPhase}
               calculatePhaseProgress={calculatePhaseProgress}
             />
-            <ProgressSection
-              currentPhase={currentPhase}
-              calculatePhaseProgress={calculatePhaseProgress}
-              calculateOverallProgress={calculateOverallProgress}
-            />
+            <Card className="mb-6 bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm border-white/20">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Progress Overview</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <ProgressBar
+                  progress={calculatePhaseProgress(currentPhase)}
+                  label="Phase Progress"
+                />
+                <ProgressBar
+                  progress={calculateOverallProgress()}
+                  label="Overall Progress"
+                />
+              </CardContent>
+            </Card>
           </SidebarContent>
         </Sidebar>
         <div className="flex-1 flex flex-col">
