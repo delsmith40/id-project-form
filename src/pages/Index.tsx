@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { BarChart3, FileSpreadsheet, FilePlus, ListFilter } from "lucide-react";
+import { InstructionalDesignDialog } from "@/components/forms/InstructionalDesignDialog";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -8,14 +9,7 @@ const Index = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] max-w-4xl mx-auto px-6">
       <div className="w-full space-y-8">
-        <Button
-          onClick={() => navigate("/analyze")}
-          className="w-full py-8 text-xl bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 transform transition-all duration-200 hover:scale-[1.02] active:scale-95 animate-fade-in"
-        >
-          Project Request
-          <span className="text-sm ml-2">(Customer Form)</span>
-          <FileSpreadsheet className="ml-2 h-6 w-6" />
-        </Button>
+        <InstructionalDesignDialog />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
           <Button
