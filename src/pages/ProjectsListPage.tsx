@@ -9,9 +9,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { RequestDetailsDialog } from "@/components/forms/RequestDetailsDialog";
+import { useState } from "react";
 
 const ProjectsListPage = () => {
+  const [selectedRequest, setSelectedRequest] = useState<any>(null);
+  const [dialogMode, setDialogMode] = useState<"view" | "edit">("view");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   // Get projects from localStorage
   const projects = JSON.parse(localStorage.getItem("projects") || "[]");
   const instructionalRequests = JSON.parse(localStorage.getItem("instructionalRequests") || "[]");
@@ -34,19 +40,20 @@ const ProjectsListPage = () => {
   };
 
   const handleEdit = (request: any) => {
-    // For now, we'll just show a toast. You can implement the edit functionality later
-    toast({
-      title: "Edit Request",
-      description: "Edit functionality will be implemented soon.",
-    });
+    setSelectedRequest(request);
+    setDialogMode("edit");
+    setIsDialogOpen(true);
   };
 
   const handleView = (request: any) => {
-    // For now, we'll just show a toast with the request details
-    toast({
-      title: "Request Details",
-      description: `${request.nameAndDepartment} - ${request.topic}`,
-    });
+    setSelectedRequest(request);
+    setDialogMode("view");
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setSelectedRequest(null);
   };
 
   return (
@@ -107,6 +114,15 @@ const ProjectsListPage = () => {
             </Table>
           </CardContent>
         </Card>
+      )}
+
+      {selectedRequest && (
+        <RequestDetailsDialog
+          request={selectedRequest}
+          isOpen={isDialogOpen}
+          onClose={handleCloseDialog}
+          mode={dialogMode}
+        />
       )}
       
       {proposedProjects.length > 0 && (
