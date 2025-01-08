@@ -23,15 +23,32 @@ interface FormData {
   documentOwner: string;
   technicalApprover: string;
   sendEmailReceipt: boolean;
+  email?: string;
 }
 
 export function InstructionalDesignForm({ onClose }: { onClose: () => void }) {
   const { toast } = useToast();
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<FormData>();
   const [date, setDate] = useState<Date>();
+  const sendEmailReceipt = watch("sendEmailReceipt");
 
   const onSubmit = (data: FormData) => {
     console.log(data);
+    if (data.sendEmailReceipt && !data.email) {
+      toast({
+        title: "Email Required",
+        description: "Please provide an email address to receive the form receipt.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Here you would implement the email sending functionality
+    if (data.sendEmailReceipt && data.email) {
+      console.log(`Sending email to: ${data.email}`);
+      // Add your email sending logic here
+    }
+
     toast({
       title: "Form Submitted",
       description: "Your request has been submitted successfully. We'll get back to you within 48 hours.",
@@ -129,9 +146,9 @@ export function InstructionalDesignForm({ onClose }: { onClose: () => void }) {
                   <Calendar
                     mode="single"
                     selected={date}
-                    onSelect={(date) => {
-                      setDate(date);
-                      setValue("completionDate", date);
+                    onSelect={(newDate) => {
+                      setDate(newDate);
+                      setValue("completionDate", newDate);
                     }}
                     initialFocus
                   />
@@ -172,16 +189,43 @@ export function InstructionalDesignForm({ onClose }: { onClose: () => void }) {
               />
             </div>
 
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="sendEmailReceipt"
-                onCheckedChange={(checked) => {
-                  setValue("sendEmailReceipt", checked as boolean);
-                }}
-              />
-              <Label htmlFor="sendEmailReceipt" className="text-base">
-                Send me an email receipt of my responses
-              </Label>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="sendEmailReceipt"
+                  onCheckedChange={(checked) => {
+                    setValue("sendEmailReceipt", checked as boolean);
+                  }}
+                />
+                <Label htmlFor="sendEmailReceipt" className="text-base">
+                  Send me an email receipt of my responses
+                </Label>
+              </div>
+
+              {sendEmailReceipt && (
+                <div>
+                  <Label htmlFor="email" className="text-base">
+                    Email Address <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    {...register("email", {
+                      required: sendEmailReceipt,
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: "Invalid email address",
+                      },
+                    })}
+                    className="mt-1.5"
+                  />
+                  {errors.email && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.email.message || "Email is required"}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
