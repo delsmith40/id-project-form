@@ -24,9 +24,14 @@ const ProjectsListPage = () => {
   const { toast } = useToast();
 
   // Group projects by status
-  const proposedProjects = projects.filter((p: any) => p.status === "proposed");
-  const inProgressProjects = projects.filter((p: any) => p.status === "in_progress");
-  const completedProjects = projects.filter((p: any) => p.status === "completed");
+  const groupedProjects = projects.reduce((acc: any, project: any) => {
+    const status = project.status || 'other';
+    if (!acc[status]) {
+      acc[status] = [];
+    }
+    acc[status].push(project);
+    return acc;
+  }, {});
 
   const handleDelete = (index: number) => {
     const updatedRequests = [...instructionalRequests];
@@ -125,28 +130,16 @@ const ProjectsListPage = () => {
         />
       )}
       
-      {proposedProjects.length > 0 && (
+      {/* Display projects grouped by status */}
+      {Object.entries(groupedProjects).map(([status, projectsList]: [string, any]) => (
         <ProjectSection 
-          title="Proposed Projects" 
-          projects={proposedProjects}
+          key={status}
+          title={`${status.charAt(0).toUpperCase() + status.slice(1)} Projects`}
+          projects={projectsList}
+          showProgress={status === "in_progress"}
+          showCompletedDate={status === "completed"}
         />
-      )}
-      
-      {inProgressProjects.length > 0 && (
-        <ProjectSection 
-          title="In Progress Projects" 
-          projects={inProgressProjects}
-          showProgress={true}
-        />
-      )}
-      
-      {completedProjects.length > 0 && (
-        <ProjectSection 
-          title="Completed Projects" 
-          projects={completedProjects}
-          showCompletedDate={true}
-        />
-      )}
+      ))}
 
       {projects.length === 0 && instructionalRequests.length === 0 && (
         <div className="text-center py-12">
