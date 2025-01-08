@@ -37,20 +37,32 @@ export function NavigationMenu({ phases, currentPhase, calculatePhaseProgress }:
 
   return (
     <SidebarGroup>
-      <Card className="mb-6 bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm border-white/20">
+      <Card className="mb-6 bg-slate-900/95 backdrop-blur-sm border-white/10 shadow-xl">
         <CardHeader className="pb-2">
-          <CardTitle className="text-xl font-bold tracking-tight text-white">Progress Overview</CardTitle>
+          <CardTitle className="text-2xl font-bold tracking-tighter bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+            Progress Overview
+          </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-white/80">Phase Progress</p>
+        <CardContent className="space-y-6">
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <p className="text-sm font-medium text-white/90">Phase Progress</p>
+              <span className="text-sm font-bold text-white">
+                {calculatePhaseProgress(currentPhase)}%
+              </span>
+            </div>
             <ProgressBar
               progress={calculatePhaseProgress(currentPhase)}
               label="Phase Progress"
             />
           </div>
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-white/80">Overall Progress</p>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <p className="text-sm font-medium text-white/90">Overall Progress</p>
+              <span className="text-sm font-bold text-white">
+                {calculateOverallProgress()}%
+              </span>
+            </div>
             <ProgressBar
               progress={calculateOverallProgress()}
               label="Overall Progress"
