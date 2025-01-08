@@ -11,12 +11,11 @@ import { cn } from "@/lib/utils";
 import { BasicInfoSection } from "./instructional/BasicInfoSection";
 import { CapaSection } from "./instructional/CapaSection";
 import { FormData } from "./instructional/types";
-import { DatePicker } from "@/components/ui/date-picker";
 
 export function InstructionalDesignForm({ onClose }: { onClose: () => void }) {
   const { toast } = useToast();
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<FormData>();
-  const [date, setDate] = useState<Date>();
+  const [date, setDate] = useState<string>("");
   const sendEmailReceipt = watch("sendEmailReceipt");
 
   const onSubmit = (data: FormData) => {
@@ -36,7 +35,7 @@ Name and Department: ${data.nameAndDepartment}
 Topic: ${data.topic}
 Target Audience: ${data.targetAudience}
 CAPA Related: ${data.isCapaRelated}
-Completion Date: ${data.completionDate ? format(data.completionDate, 'PPP') : 'Not specified'}
+Completion Date: ${data.completionDate ? format(new Date(data.completionDate), 'PPP') : 'Not specified'}
 Subject Matter Expert: ${data.subjectMatterExpert}
 Document Owner: ${data.documentOwner}
 Technical Approver: ${data.technicalApprover}
@@ -65,15 +64,18 @@ Technical Approver: ${data.technicalApprover}
           <CapaSection setValue={setValue} />
 
           <div className="space-y-2">
-            <Label className="text-base">
+            <Label htmlFor="completionDate" className="text-base">
               What is the desired completion date? <span className="text-red-500">*</span>
             </Label>
-            <DatePicker
-              date={date}
-              setDate={(newDate) => {
-                setDate(newDate);
-                setValue("completionDate", newDate);
+            <Input
+              type="date"
+              id="completionDate"
+              value={date}
+              onChange={(e) => {
+                setDate(e.target.value);
+                setValue("completionDate", new Date(e.target.value));
               }}
+              className="mt-1.5"
             />
           </div>
 
