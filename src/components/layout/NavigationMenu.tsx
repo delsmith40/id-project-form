@@ -37,6 +37,28 @@ export function NavigationMenu({ phases, currentPhase, calculatePhaseProgress }:
 
   return (
     <SidebarGroup>
+      <Card className="mb-6 bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm border-white/20">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-xl font-bold tracking-tight text-white">Progress Overview</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-white/80">Phase Progress</p>
+            <ProgressBar
+              progress={calculatePhaseProgress(currentPhase)}
+              label="Phase Progress"
+            />
+          </div>
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-white/80">Overall Progress</p>
+            <ProgressBar
+              progress={calculateOverallProgress()}
+              label="Overall Progress"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
       <SidebarMenuItem>
         <button
           onClick={() => navigate('/')}
@@ -47,23 +69,7 @@ export function NavigationMenu({ phases, currentPhase, calculatePhaseProgress }:
         </button>
       </SidebarMenuItem>
 
-      <Card className="mb-6 bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm border-white/20">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg">Progress Overview</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <ProgressBar
-            progress={calculatePhaseProgress(currentPhase)}
-            label="Phase Progress"
-          />
-          <ProgressBar
-            progress={calculateOverallProgress()}
-            label="Overall Progress"
-          />
-        </CardContent>
-      </Card>
-
-      <SidebarGroupLabel>Project Phases</SidebarGroupLabel>
+      <SidebarGroupLabel className="text-lg font-semibold text-white/90">Project Phases</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
           {phases.map((phase) => (
