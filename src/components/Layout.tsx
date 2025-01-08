@@ -8,7 +8,7 @@ import { phaseOrder } from "@/data/phaseData";
 import { NavigationMenu } from "./layout/NavigationMenu";
 import { AnimatedBackground } from "./layout/AnimatedBackground";
 import { Header } from "./layout/Header";
-import { ProgressBar } from "../ProgressBar";
+import { ProgressBar } from "./ProgressBar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const phases = [
