@@ -32,8 +32,9 @@ export function useProjectFormLogic() {
       date: formData.date ? formData.date.toISOString() : null,
     }));
     toast({
-      title: "Progress Saved",
-      description: "Your form progress has been saved successfully.",
+      title: "Success",
+      description: "Your progress has been saved successfully.",
+      variant: "default",
     });
   };
 
@@ -100,8 +101,9 @@ export function useProjectFormLogic() {
     clearAllFormData();
     
     toast({
-      title: "Project Submitted",
-      description: "Your project has been successfully submitted!",
+      title: "Success",
+      description: "Your project has been successfully submitted and saved!",
+      variant: "default",
     });
     navigate("/");
   };
@@ -131,8 +133,8 @@ export function useProjectFormLogic() {
     clearAllFormData();
 
     toast({
-      title: "Project Submitted (Bypass Mode)",
-      description: "Your project has been submitted without completion checks!",
+      title: "Success",
+      description: "Your project has been submitted and saved using bypass mode!",
       variant: "default",
     });
     navigate("/");
