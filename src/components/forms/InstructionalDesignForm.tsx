@@ -9,7 +9,7 @@ import { CompletionDatePicker } from "./instructional/CompletionDatePicker";
 import { ApprovalFields } from "./instructional/ApprovalFields";
 import { EmailReceiptSection } from "./instructional/EmailReceiptSection";
 import { FormData } from "./instructional/types";
-import sgMail from '@sendgrid/mail';
+import nodemailer from 'nodemailer';
 
 export function InstructionalDesignForm({ onClose }: { onClose: () => void }) {
   const { toast } = useToast();
@@ -18,6 +18,16 @@ export function InstructionalDesignForm({ onClose }: { onClose: () => void }) {
 
   const sendEmail = async (data: FormData) => {
     try {
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: Number(process.env.SMTP_PORT) || 587,
+        secure: process.env.SMTP_SECURE === 'true',
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASSWORD,
+        },
+      });
+
       const emailBody = `
         Name and Department: ${data.nameAndDepartment}
         Topic: ${data.topic}
@@ -29,15 +39,14 @@ export function InstructionalDesignForm({ onClose }: { onClose: () => void }) {
         Technical Approver: ${data.technicalApprover}
       `;
 
-      const msg = {
+      const mailOptions = {
+        from: process.env.SMTP_FROM_EMAIL,
         to: data.email!,
-        from: 'your-verified-sender@yourdomain.com', // Replace with your verified sender
         subject: 'Instructional Design Request Form Submission',
         text: emailBody,
       };
 
-      sgMail.setApiKey(process.env.SENDGRID_API_KEY || '');
-      await sgMail.send(msg);
+      await transporter.sendMail(mailOptions);
       
       toast({
         title: "Email Sent",
