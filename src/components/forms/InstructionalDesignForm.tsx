@@ -10,11 +10,15 @@ import { format } from "date-fns";
 import { BasicInfoSection } from "./instructional/BasicInfoSection";
 import { CapaSection } from "./instructional/CapaSection";
 import { FormData } from "./instructional/types";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function InstructionalDesignForm({ onClose }: { onClose: () => void }) {
   const { toast } = useToast();
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<FormData>();
-  const [date, setDate] = useState<string>("");
+  const [date, setDate] = useState<Date>();
   const sendEmailReceipt = watch("sendEmailReceipt");
 
   const onSubmit = (data: FormData) => {
@@ -70,16 +74,31 @@ Technical Approver: ${data.technicalApprover}
             <Label htmlFor="completionDate" className="text-base">
               What is the desired completion date? <span className="text-red-500">*</span>
             </Label>
-            <Input
-              type="date"
-              id="completionDate"
-              value={date}
-              onChange={(e) => {
-                setDate(e.target.value);
-                setValue("completionDate", new Date(e.target.value));
-              }}
-              className="mt-1.5"
-            />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !date && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {date ? format(date, "PPP") : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={(newDate) => {
+                    setDate(newDate);
+                    setValue("completionDate", newDate);
+                  }}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </div>
 
           <div>
