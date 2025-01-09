@@ -1,24 +1,18 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
 import { BasicInfoSection } from "./instructional/BasicInfoSection";
 import { CapaSection } from "./instructional/CapaSection";
+import { CompletionDatePicker } from "./instructional/CompletionDatePicker";
+import { ApprovalFields } from "./instructional/ApprovalFields";
+import { EmailReceiptSection } from "./instructional/EmailReceiptSection";
 import { FormData } from "./instructional/types";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export function InstructionalDesignForm({ onClose }: { onClose: () => void }) {
   const { toast } = useToast();
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<FormData>();
-  const [date, setDate] = useState<Date>();
   const sendEmailReceipt = watch("sendEmailReceipt");
 
   const onSubmit = (data: FormData) => {
@@ -69,109 +63,14 @@ Technical Approver: ${data.technicalApprover}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <BasicInfoSection register={register} />
           <CapaSection setValue={setValue} />
-
-          <div className="space-y-2">
-            <Label htmlFor="completionDate" className="text-base">
-              What is the desired completion date? <span className="text-red-500">*</span>
-            </Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "PPP") : <span>Pick a date</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={(newDate) => {
-                    setDate(newDate);
-                    setValue("completionDate", newDate);
-                  }}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          <div>
-            <Label htmlFor="subjectMatterExpert" className="text-base">
-              Please provide the name of the person that will serve as the subject matter expert
-            </Label>
-            <Input
-              id="subjectMatterExpert"
-              {...register("subjectMatterExpert")}
-              className="mt-1.5"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="documentOwner" className="text-base">
-              Please provide the name of the person that will serve as the Document Owner
-            </Label>
-            <Input
-              id="documentOwner"
-              {...register("documentOwner")}
-              className="mt-1.5"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="technicalApprover" className="text-base">
-              Please provide the name of the person that will serve as the Technical Approver
-            </Label>
-            <Input
-              id="technicalApprover"
-              {...register("technicalApprover")}
-              className="mt-1.5"
-            />
-          </div>
-
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="sendEmailReceipt"
-                onCheckedChange={(checked) => {
-                  setValue("sendEmailReceipt", checked as boolean);
-                }}
-              />
-              <Label htmlFor="sendEmailReceipt" className="text-base">
-                Send me an email receipt of my responses
-              </Label>
-            </div>
-
-            {sendEmailReceipt && (
-              <div>
-                <Label htmlFor="email" className="text-base">
-                  Email Address <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  {...register("email", {
-                    required: sendEmailReceipt,
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "Invalid email address",
-                    },
-                  })}
-                  className="mt-1.5"
-                />
-                {errors.email && (
-                  <p className="text-sm text-red-500 mt-1">
-                    {errors.email.message || "Email is required"}
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
+          <CompletionDatePicker setValue={setValue} />
+          <ApprovalFields register={register} />
+          <EmailReceiptSection
+            register={register}
+            setValue={setValue}
+            sendEmailReceipt={sendEmailReceipt}
+            errors={errors}
+          />
 
           <div className="flex justify-end space-x-4">
             <Button type="button" variant="outline" onClick={onClose}>
