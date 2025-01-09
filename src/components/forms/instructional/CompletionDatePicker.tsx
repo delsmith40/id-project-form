@@ -1,12 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { UseFormSetValue } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormData } from "./types";
 
 interface CompletionDatePickerProps {
@@ -14,45 +9,90 @@ interface CompletionDatePickerProps {
 }
 
 export function CompletionDatePicker({ setValue }: CompletionDatePickerProps) {
-  const [date, setDate] = useState<Date>();
-  const [open, setOpen] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState<string>("");
+  const [selectedYear, setSelectedYear] = useState<string>("");
+  const [selectedDay, setSelectedDay] = useState<string>("");
+  const [daysInMonth, setDaysInMonth] = useState<number[]>([]);
 
-  const handleSelect = (newDate: Date | undefined) => {
-    if (newDate) {
-      setDate(newDate);
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 5 }, (_, i) => currentYear + i);
+
+  useEffect(() => {
+    if (selectedMonth && selectedYear) {
+      const days = new Date(parseInt(selectedYear), months.indexOf(selectedMonth) + 1, 0).getDate();
+      setDaysInMonth(Array.from({ length: days }, (_, i) => i + 1));
+    }
+  }, [selectedMonth, selectedYear]);
+
+  const handleDateChange = (type: 'month' | 'year' | 'day', value: string) => {
+    if (type === 'month') setSelectedMonth(value);
+    if (type === 'year') setSelectedYear(value);
+    if (type === 'day') setSelectedDay(value);
+
+    if (selectedMonth && selectedYear && (type === 'day' ? value : selectedDay)) {
+      const newDate = new Date(
+        parseInt(type === 'year' ? value : selectedYear),
+        type === 'month' ? months.indexOf(value) : months.indexOf(selectedMonth),
+        parseInt(type === 'day' ? value : selectedDay)
+      );
       setValue("completionDate", newDate);
-      // Don't close the popover here - let the user explicitly close it
     }
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       <Label htmlFor="completionDate" className="text-base">
         What is the desired completion date? <span className="text-red-500">*</span>
       </Label>
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            className={cn(
-              "w-full justify-start text-left font-normal",
-              !date && "text-muted-foreground"
-            )}
-          >
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {date ? format(date, "PPP") : <span>Pick a date</span>}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <Calendar
-            mode="single"
-            selected={date}
-            onSelect={handleSelect}
-            initialFocus
-            disabled={(date) => date < new Date()}
-          />
-        </PopoverContent>
-      </Popover>
+      <div className="grid grid-cols-3 gap-4">
+        <Select value={selectedMonth} onValueChange={(value) => handleDateChange('month', value)}>
+          <SelectTrigger>
+            <SelectValue placeholder="Month" />
+          </SelectTrigger>
+          <SelectContent>
+            {months.map((month) => (
+              <SelectItem key={month} value={month}>
+                {month}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select value={selectedYear} onValueChange={(value) => handleDateChange('year', value)}>
+          <SelectTrigger>
+            <SelectValue placeholder="Year" />
+          </SelectTrigger>
+          <SelectContent>
+            {years.map((year) => (
+              <SelectItem key={year} value={year.toString()}>
+                {year}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select 
+          value={selectedDay} 
+          onValueChange={(value) => handleDateChange('day', value)}
+          disabled={!selectedMonth || !selectedYear}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Day" />
+          </SelectTrigger>
+          <SelectContent>
+            {daysInMonth.map((day) => (
+              <SelectItem key={day} value={day.toString()}>
+                {day}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   );
 }
