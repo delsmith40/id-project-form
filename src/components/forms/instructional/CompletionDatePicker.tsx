@@ -21,7 +21,7 @@ export function CompletionDatePicker({ setValue }: CompletionDatePickerProps) {
     if (newDate) {
       setDate(newDate);
       setValue("completionDate", newDate);
-      setOpen(false);
+      // Don't close the popover here - let the user explicitly close it
     }
   };
 
