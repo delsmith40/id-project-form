@@ -9,7 +9,6 @@ import { CompletionDatePicker } from "./instructional/CompletionDatePicker";
 import { ApprovalFields } from "./instructional/ApprovalFields";
 import { EmailReceiptSection } from "./instructional/EmailReceiptSection";
 import { FormData } from "./instructional/types";
-import nodemailer from 'nodemailer';
 
 export function InstructionalDesignForm({ onClose }: { onClose: () => void }) {
   const { toast } = useToast();
@@ -18,35 +17,30 @@ export function InstructionalDesignForm({ onClose }: { onClose: () => void }) {
 
   const sendEmail = async (data: FormData) => {
     try {
-      const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT) || 587,
-        secure: process.env.SMTP_SECURE === 'true',
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASSWORD,
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          to: data.email,
+          subject: 'Instructional Design Request Form Submission',
+          text: `
+            Name and Department: ${data.nameAndDepartment}
+            Topic: ${data.topic}
+            Target Audience: ${data.targetAudience}
+            CAPA Related: ${data.isCapaRelated}
+            Completion Date: ${data.completionDate ? format(new Date(data.completionDate), 'PPP') : 'Not specified'}
+            Subject Matter Expert: ${data.subjectMatterExpert}
+            Document Owner: ${data.documentOwner}
+            Technical Approver: ${data.technicalApprover}
+          `
+        }),
       });
 
-      const emailBody = `
-        Name and Department: ${data.nameAndDepartment}
-        Topic: ${data.topic}
-        Target Audience: ${data.targetAudience}
-        CAPA Related: ${data.isCapaRelated}
-        Completion Date: ${data.completionDate ? format(new Date(data.completionDate), 'PPP') : 'Not specified'}
-        Subject Matter Expert: ${data.subjectMatterExpert}
-        Document Owner: ${data.documentOwner}
-        Technical Approver: ${data.technicalApprover}
-      `;
-
-      const mailOptions = {
-        from: process.env.SMTP_FROM_EMAIL,
-        to: data.email!,
-        subject: 'Instructional Design Request Form Submission',
-        text: emailBody,
-      };
-
-      await transporter.sendMail(mailOptions);
+      if (!response.ok) {
+        throw new Error('Failed to send email');
+      }
       
       toast({
         title: "Email Sent",
