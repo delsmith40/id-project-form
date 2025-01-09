@@ -17,6 +17,14 @@ export function CompletionDatePicker({ setValue }: CompletionDatePickerProps) {
   const [date, setDate] = useState<Date>();
   const [open, setOpen] = useState(false);
 
+  const handleSelect = (newDate: Date | undefined) => {
+    if (newDate) {
+      setDate(newDate);
+      setValue("completionDate", newDate);
+      setOpen(false);
+    }
+  };
+
   return (
     <div className="space-y-2">
       <Label htmlFor="completionDate" className="text-base">
@@ -39,13 +47,7 @@ export function CompletionDatePicker({ setValue }: CompletionDatePickerProps) {
           <Calendar
             mode="single"
             selected={date}
-            onSelect={(newDate) => {
-              if (newDate) {
-                setDate(newDate);
-                setValue("completionDate", newDate);
-                setOpen(false);
-              }
-            }}
+            onSelect={handleSelect}
             initialFocus
             disabled={(date) => date < new Date()}
           />
