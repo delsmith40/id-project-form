@@ -9,13 +9,51 @@ import { CompletionDatePicker } from "./instructional/CompletionDatePicker";
 import { ApprovalFields } from "./instructional/ApprovalFields";
 import { EmailReceiptSection } from "./instructional/EmailReceiptSection";
 import { FormData } from "./instructional/types";
+import sgMail from '@sendgrid/mail';
 
 export function InstructionalDesignForm({ onClose }: { onClose: () => void }) {
   const { toast } = useToast();
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<FormData>();
   const sendEmailReceipt = watch("sendEmailReceipt");
 
-  const onSubmit = (data: FormData) => {
+  const sendEmail = async (data: FormData) => {
+    try {
+      const emailBody = `
+        Name and Department: ${data.nameAndDepartment}
+        Topic: ${data.topic}
+        Target Audience: ${data.targetAudience}
+        CAPA Related: ${data.isCapaRelated}
+        Completion Date: ${data.completionDate ? format(new Date(data.completionDate), 'PPP') : 'Not specified'}
+        Subject Matter Expert: ${data.subjectMatterExpert}
+        Document Owner: ${data.documentOwner}
+        Technical Approver: ${data.technicalApprover}
+      `;
+
+      const msg = {
+        to: data.email!,
+        from: 'your-verified-sender@yourdomain.com', // Replace with your verified sender
+        subject: 'Instructional Design Request Form Submission',
+        text: emailBody,
+      };
+
+      sgMail.setApiKey(process.env.SENDGRID_API_KEY || '');
+      await sgMail.send(msg);
+      
+      toast({
+        title: "Email Sent",
+        description: "Form receipt has been sent to your email.",
+      });
+    } catch (error) {
+      console.error('Error sending email:', error);
+      toast({
+        title: "Email Error",
+        description: "Failed to send email receipt. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const onSubmit = async (data: FormData) => {
     if (data.sendEmailReceipt && !data.email) {
       toast({
         title: "Email Required",
@@ -30,18 +68,7 @@ export function InstructionalDesignForm({ onClose }: { onClose: () => void }) {
     localStorage.setItem("instructionalRequests", JSON.stringify([...existingRequests, data]));
     
     if (data.sendEmailReceipt && data.email) {
-      const subject = encodeURIComponent("Instructional Design Request Form Submission");
-      const body = encodeURIComponent(`
-Name and Department: ${data.nameAndDepartment}
-Topic: ${data.topic}
-Target Audience: ${data.targetAudience}
-CAPA Related: ${data.isCapaRelated}
-Completion Date: ${data.completionDate ? format(new Date(data.completionDate), 'PPP') : 'Not specified'}
-Subject Matter Expert: ${data.subjectMatterExpert}
-Document Owner: ${data.documentOwner}
-Technical Approver: ${data.technicalApprover}
-      `);
-      window.location.href = `mailto:${data.email}?subject=${subject}&body=${body}`;
+      await sendEmail(data);
     }
 
     toast({
