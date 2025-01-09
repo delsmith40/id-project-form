@@ -15,13 +15,14 @@ interface CompletionDatePickerProps {
 
 export function CompletionDatePicker({ setValue }: CompletionDatePickerProps) {
   const [date, setDate] = useState<Date>();
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="space-y-2">
       <Label htmlFor="completionDate" className="text-base">
         What is the desired completion date? <span className="text-red-500">*</span>
       </Label>
-      <Popover>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
@@ -39,10 +40,14 @@ export function CompletionDatePicker({ setValue }: CompletionDatePickerProps) {
             mode="single"
             selected={date}
             onSelect={(newDate) => {
-              setDate(newDate);
-              setValue("completionDate", newDate);
+              if (newDate) {
+                setDate(newDate);
+                setValue("completionDate", newDate);
+                setOpen(false);
+              }
             }}
             initialFocus
+            disabled={(date) => date < new Date()}
           />
         </PopoverContent>
       </Popover>
