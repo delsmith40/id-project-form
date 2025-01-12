@@ -36,7 +36,11 @@ export function ProjectChart({
         <ResponsiveContainer width="100%" height="100%">
           <BarChart 
             data={data}
-            onClick={(data) => data && onClick(data.activePayload[0].payload)}
+            onClick={(data) => {
+              if (data && data.activePayload && data.activePayload.length > 0) {
+                onClick(data.activePayload[0].payload);
+              }
+            }}
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
