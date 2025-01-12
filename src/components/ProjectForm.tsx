@@ -2,7 +2,7 @@ import { PhaseQuestions } from "./PhaseQuestions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProjectInformationForm } from "./project/ProjectInformationForm";
 import { ProjectSubmissionButtons } from "./project/ProjectSubmissionButtons";
-import { useProjectFormLogic } from "./project/ProjectFormLogic";
+import { useProjectForm } from "@/hooks/useProjectForm";
 import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
@@ -21,7 +21,7 @@ export function ProjectForm({ phase }: ProjectFormProps) {
     handleSubmitProject,
     handleBypassSubmit,
     loadProjectData,
-  } = useProjectFormLogic();
+  } = useProjectForm();
 
   const form = useForm();
 
