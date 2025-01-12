@@ -10,6 +10,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
+import { phaseOrder } from "@/data/phaseData";
 
 interface ProjectSubmissionButtonsProps {
   onSave: () => void;
@@ -22,6 +24,68 @@ export function ProjectSubmissionButtons({
   onSubmit,
   onBypassSubmit,
 }: ProjectSubmissionButtonsProps) {
+  const { toast } = useToast();
+
+  const calculateProjectProgress = () => {
+    let totalProgress = 0;
+    phaseOrder.forEach(phase => {
+      const answers = localStorage.getItem(`${phase}-answers`);
+      if (answers) {
+        const parsedAnswers = JSON.parse(answers);
+        const answeredQuestions = Object.values(parsedAnswers).filter(
+          answer => answer && String(answer).trim() !== ""
+        ).length;
+        const progress = answeredQuestions > 0 ? (answeredQuestions / Object.keys(parsedAnswers).length) * 100 : 0;
+        totalProgress += progress;
+      }
+    });
+    return Math.round(totalProgress / phaseOrder.length);
+  };
+
+  const handleSave = () => {
+    const projectForm = localStorage.getItem("projectForm");
+    if (projectForm) {
+      const formData = JSON.parse(projectForm);
+      const existingProjects = JSON.parse(localStorage.getItem("projects") || "[]");
+      const progress = calculateProjectProgress();
+      
+      const projectIndex = existingProjects.findIndex((p: any) => p.title === formData.projectName);
+      const updatedProject = {
+        id: projectIndex >= 0 ? existingProjects[projectIndex].id : Date.now().toString(),
+        title: formData.projectName,
+        teamMember: formData.teamMember,
+        projectOwner: formData.projectOwner,
+        date: formData.date,
+        status: formData.status,
+        progress: `${progress}%`
+      };
+
+      if (projectIndex >= 0) {
+        existingProjects[projectIndex] = updatedProject;
+      } else {
+        existingProjects.push(updatedProject);
+      }
+
+      localStorage.setItem("projects", JSON.stringify(existingProjects));
+    }
+    
+    onSave();
+    toast({
+      title: "Progress Saved",
+      description: "Your project progress has been saved successfully.",
+    });
+  };
+
+  const handleSubmit = () => {
+    handleSave();
+    onSubmit();
+  };
+
+  const handleBypass = () => {
+    handleSave();
+    onBypassSubmit();
+  };
+
   return (
     <div className="flex gap-4 mt-6">
       <AlertDialog>
@@ -37,7 +101,7 @@ export function ProjectSubmissionButtons({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={onSave}>Save</AlertDialogAction>
+            <AlertDialogAction onClick={handleSave}>Save</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -57,7 +121,7 @@ export function ProjectSubmissionButtons({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={onSubmit}>Submit</AlertDialogAction>
+            <AlertDialogAction onClick={handleSubmit}>Submit</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -80,7 +144,7 @@ export function ProjectSubmissionButtons({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={onBypassSubmit}>Bypass</AlertDialogAction>
+            <AlertDialogAction onClick={handleBypass}>Bypass</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
