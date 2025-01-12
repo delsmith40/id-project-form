@@ -29,8 +29,8 @@ export function ProjectTable({ projects, showProgress = false, showCompletedDate
   const navigate = useNavigate();
 
   const handleViewDetails = (project: Project) => {
-    // Navigate to the analyze phase of the project, which is the starting point
-    navigate(`/analyze/${project.id}`);
+    // Navigate to the project form with the project ID
+    navigate(`/project/${project.id}`);
   };
 
   return (
