@@ -18,8 +18,18 @@ const ProjectsListPage = () => {
   const [dialogMode, setDialogMode] = useState<"view" | "edit">("view");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // Get projects from localStorage
-  const projects = JSON.parse(localStorage.getItem("projects") || "[]");
+  // Get and format projects from localStorage
+  const rawProjects = JSON.parse(localStorage.getItem("projects") || "[]");
+  const projects = rawProjects.map((project: any) => ({
+    id: project.id,
+    title: project.title,
+    teamMember: project.teamMember,
+    date: new Date(project.date).toLocaleDateString(),
+    progress: project.progress || "0%",
+    completedDate: project.completedDate ? new Date(project.completedDate).toLocaleDateString() : undefined,
+    status: project.status || "proposed"
+  }));
+
   const instructionalRequests = JSON.parse(localStorage.getItem("instructionalRequests") || "[]");
   const { toast } = useToast();
 
