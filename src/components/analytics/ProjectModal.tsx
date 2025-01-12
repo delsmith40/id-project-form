@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { ProjectForm } from "../ProjectForm";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ProjectModalProps {
   isOpen: boolean;
@@ -24,11 +25,11 @@ export function ProjectModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl">
+      <DialogContent className="max-w-4xl h-[90vh]">
         <DialogHeader>
           <DialogTitle>{selectedProject?.name || selectedProject?.title}</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
+        <ScrollArea className="h-full max-h-[calc(90vh-80px)] pr-4">
           {!selectedProject.projects ? (
             <ProjectForm phase={selectedProject.phase || "proposed"} />
           ) : (
@@ -49,7 +50,7 @@ export function ProjectModal({
               ))}
             </div>
           )}
-        </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
