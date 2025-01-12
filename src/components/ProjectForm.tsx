@@ -31,13 +31,14 @@ export function ProjectForm({ phase }: ProjectFormProps) {
     }
   }, [id]);
 
-  const onSubmit = () => {
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     handleSave();
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-5xl mx-auto">
+      <form onSubmit={onSubmit} className="space-y-8 max-w-5xl mx-auto">
         <Card className="animate-fade-in">
           <CardHeader>
             <CardTitle>Project Information</CardTitle>
@@ -50,7 +51,7 @@ export function ProjectForm({ phase }: ProjectFormProps) {
           </CardContent>
         </Card>
 
-        <PhaseQuestions phase={phase} />
+        <PhaseQuestions phase={phase} onSave={handleSave} />
 
         <Card className="animate-fade-in">
           <CardContent className="pt-6">

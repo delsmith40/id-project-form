@@ -17,10 +17,11 @@ import {
 
 interface PhaseQuestionsProps {
   phase: string;
+  onSave?: () => void;
 }
 
-export function PhaseQuestions({ phase }: PhaseQuestionsProps) {
-  const { answers, handleSave, handleAnswerChange } = usePhaseLogic(phase);
+export function PhaseQuestions({ phase, onSave }: PhaseQuestionsProps) {
+  const { answers, handleAnswerChange } = usePhaseLogic(phase);
 
   const getPhaseData = (): PhaseData => {
     switch (phase) {
@@ -95,12 +96,6 @@ export function PhaseQuestions({ phase }: PhaseQuestionsProps) {
                 />
               ))}
             </Accordion>
-            <Button
-              onClick={handleSave}
-              className="w-full bg-phase-analyze hover:bg-phase-analyze/90"
-            >
-              Save Answers & Continue to Next Phase
-            </Button>
           </CardContent>
         </Card>
       </div>
