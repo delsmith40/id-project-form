@@ -9,6 +9,7 @@ import EvaluatePage from "./pages/EvaluatePage";
 import DocumentPage from "./pages/DocumentPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import ProjectsListPage from "./pages/ProjectsListPage";
+import ProjectPage from "./pages/ProjectPage";
 import "./App.css";
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <Route path="document" element={<DocumentPage />} />
           <Route path="analytics" element={<AnalyticsPage />} />
           <Route path="projects-list" element={<ProjectsListPage />} />
+          <Route path="project/:id" element={<ProjectPage />} />
         </Route>
       </Routes>
     </Router>
