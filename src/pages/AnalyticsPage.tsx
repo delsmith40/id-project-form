@@ -27,6 +27,8 @@ const AnalyticsPage = () => {
             phase: project.status,
             id: project.id,
             description: project.description || `Status: ${project.status}`,
+            teamMember: project.teamMember || 'Unassigned',
+            projectOwner: project.projectOwner || 'Unassigned',
           }));
           setProjectData(transformedProjects);
         }
@@ -53,6 +55,24 @@ const AnalyticsPage = () => {
     { phase: "Completed", count: projectData.filter(p => p.phase === "completed").length },
   ];
 
+  // Group projects by team member
+  const teamMemberData = Object.entries(
+    projectData.reduce((acc: any, project) => {
+      const member = project.teamMember || 'Unassigned';
+      acc[member] = (acc[member] || 0) + 1;
+      return acc;
+    }, {})
+  ).map(([name, count]) => ({ name, count }));
+
+  // Group projects by project owner
+  const projectOwnerData = Object.entries(
+    projectData.reduce((acc: any, project) => {
+      const owner = project.projectOwner || 'Unassigned';
+      acc[owner] = (acc[owner] || 0) + 1;
+      return acc;
+    }, {})
+  ).map(([name, count]) => ({ name, count }));
+
   const filteredProjects = projectData.filter(
     (project) =>
       project.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
@@ -76,6 +96,34 @@ const AnalyticsPage = () => {
         name: `${data.phase} Phase`,
         description: `There are ${data.count} projects in the ${data.phase} phase`,
         projects: projectsInPhase
+      });
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleTeamMemberClick = (data) => {
+    const projectsByMember = projectData.filter(
+      p => (p.teamMember || 'Unassigned') === data.name
+    );
+    if (projectsByMember.length > 0) {
+      setSelectedProject({
+        name: `Projects by ${data.name}`,
+        description: `${data.name} is assigned to ${data.count} projects`,
+        projects: projectsByMember
+      });
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleProjectOwnerClick = (data) => {
+    const projectsByOwner = projectData.filter(
+      p => (p.projectOwner || 'Unassigned') === data.name
+    );
+    if (projectsByOwner.length > 0) {
+      setSelectedProject({
+        name: `Projects owned by ${data.name}`,
+        description: `${data.name} owns ${data.count} projects`,
+        projects: projectsByOwner
       });
       setIsModalOpen(true);
     }
@@ -107,6 +155,24 @@ const AnalyticsPage = () => {
           fill="#82ca9d"
           name="Number of Projects"
           onClick={handlePhaseClick}
+        />
+
+        <ProjectChart
+          title="Projects by Team Member"
+          data={teamMemberData}
+          dataKey="count"
+          fill="#ffc658"
+          name="Number of Projects"
+          onClick={handleTeamMemberClick}
+        />
+
+        <ProjectChart
+          title="Projects by Project Owner"
+          data={projectOwnerData}
+          dataKey="count"
+          fill="#ff7300"
+          name="Number of Projects"
+          onClick={handleProjectOwnerClick}
         />
       </div>
 
