@@ -25,11 +25,11 @@ export function ProjectModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl h-[90vh]">
+      <DialogContent className="max-w-4xl h-[90vh] overflow-hidden">
         <DialogHeader>
           <DialogTitle>{selectedProject?.name || selectedProject?.title}</DialogTitle>
         </DialogHeader>
-        <ScrollArea className="h-full max-h-[calc(90vh-80px)] pr-4">
+        <ScrollArea className="h-full max-h-[calc(90vh-80px)] px-6">
           {!selectedProject.projects ? (
             <ProjectForm phase={selectedProject.phase || "proposed"} />
           ) : (
