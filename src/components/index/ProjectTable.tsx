@@ -28,6 +28,11 @@ interface ProjectTableProps {
 export function ProjectTable({ projects, showProgress = false, showCompletedDate = false }: ProjectTableProps) {
   const navigate = useNavigate();
 
+  const handleViewDetails = (project: Project) => {
+    // Navigate to the analyze phase of the project, which is the starting point
+    navigate(`/analyze/${project.id}`);
+  };
+
   return (
     <Table>
       <TableHeader>
@@ -49,7 +54,11 @@ export function ProjectTable({ projects, showProgress = false, showCompletedDate
             {showProgress && <TableCell>{project.progress}</TableCell>}
             {showCompletedDate && <TableCell>{project.completedDate}</TableCell>}
             <TableCell>
-              <Button variant="outline" size="sm" onClick={() => navigate(`/project/${project.id}`)}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => handleViewDetails(project)}
+              >
                 View Details
               </Button>
             </TableCell>
