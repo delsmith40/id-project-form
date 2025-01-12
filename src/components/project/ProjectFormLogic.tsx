@@ -26,6 +26,29 @@ export function useProjectFormLogic() {
     }
   }, []);
 
+  const loadProjectData = (projectId: string) => {
+    const projects = JSON.parse(localStorage.getItem("projects") || "[]");
+    const project = projects.find((p: any) => p.id === projectId);
+    
+    if (project) {
+      setFormData({
+        projectName: project.title || "",
+        date: project.date ? new Date(project.date) : undefined,
+        teamMember: project.teamMember || "",
+        projectOwner: project.projectOwner || "",
+        status: project.status || "proposed",
+      });
+
+      // Load phase answers if they exist
+      phaseOrder.forEach(phase => {
+        const savedAnswers = localStorage.getItem(`${projectId}-${phase}-answers`);
+        if (savedAnswers) {
+          localStorage.setItem(`${phase}-answers`, savedAnswers);
+        }
+      });
+    }
+  };
+
   const handleSave = () => {
     localStorage.setItem("projectForm", JSON.stringify({
       ...formData,
@@ -146,5 +169,6 @@ export function useProjectFormLogic() {
     handleSave,
     handleSubmitProject,
     handleBypassSubmit,
+    loadProjectData,
   };
 }

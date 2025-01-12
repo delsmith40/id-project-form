@@ -5,21 +5,31 @@ import { ProjectSubmissionButtons } from "./project/ProjectSubmissionButtons";
 import { useProjectFormLogic } from "./project/ProjectFormLogic";
 import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 
 interface ProjectFormProps {
   phase: string;
 }
 
 export function ProjectForm({ phase }: ProjectFormProps) {
+  const { id } = useParams();
   const {
     formData,
     setFormData,
     handleSave,
     handleSubmitProject,
     handleBypassSubmit,
+    loadProjectData,
   } = useProjectFormLogic();
 
   const form = useForm();
+
+  useEffect(() => {
+    if (id) {
+      loadProjectData(id);
+    }
+  }, [id]);
 
   const onSubmit = () => {
     handleSave();
