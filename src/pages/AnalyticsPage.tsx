@@ -10,11 +10,13 @@ const AnalyticsPage = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [projectData, setProjectData] = useState([]);
+  const [formData, setFormData] = useState([]);
   const { toast } = useToast();
 
   useEffect(() => {
-    const loadProjects = () => {
+    const loadData = () => {
       try {
+        // Load projects
         const storedProjects = localStorage.getItem('projects');
         if (storedProjects) {
           const parsedProjects = JSON.parse(storedProjects);
@@ -31,22 +33,32 @@ const AnalyticsPage = () => {
           }));
           setProjectData(transformedProjects);
         }
+
+        // Load forms
+        const instructionalRequests = localStorage.getItem('instructionalRequests');
+        const projectForms = localStorage.getItem('projectForm');
+        
+        const forms = [
+          ...(instructionalRequests ? JSON.parse(instructionalRequests) : []),
+          ...(projectForms ? (Array.isArray(JSON.parse(projectForms)) ? JSON.parse(projectForms) : [JSON.parse(projectForms)]) : [])
+        ];
+
+        setFormData(forms);
       } catch (error) {
-        console.error('Error loading projects:', error);
+        console.error('Error loading data:', error);
         toast({
           title: "Error",
-          description: "Failed to load project data",
+          description: "Failed to load data",
           variant: "destructive",
         });
-        setProjectData([]);
       }
     };
 
-    loadProjects();
-    window.addEventListener('storage', loadProjects);
+    loadData();
+    window.addEventListener('storage', loadData);
     
     return () => {
-      window.removeEventListener('storage', loadProjects);
+      window.removeEventListener('storage', loadData);
     };
   }, [toast]);
 
@@ -61,6 +73,18 @@ const AnalyticsPage = () => {
       default: return 0;
     }
   };
+
+  // Transform form data for visualization
+  const formsByType = formData.reduce((acc: any, form: any) => {
+    const type = form.nameAndDepartment ? 'Instructional Design' : 'Project Form';
+    acc[type] = (acc[type] || 0) + 1;
+    return acc;
+  }, {});
+
+  const formChartData = Object.entries(formsByType).map(([name, count]) => ({
+    name,
+    count
+  }));
 
   const phaseData = [
     { phase: "Proposed", count: projectData.filter(p => p.phase === "proposed").length },
@@ -151,6 +175,24 @@ const AnalyticsPage = () => {
     }
   };
 
+  const handleFormClick = (data: any) => {
+    if (data && data.name) {
+      const relevantForms = formData.filter((form: any) => 
+        (data.name === 'Instructional Design' && form.nameAndDepartment) ||
+        (data.name === 'Project Form' && !form.nameAndDepartment)
+      );
+      
+      if (relevantForms.length > 0) {
+        setSelectedProject({
+          name: `${data.name} Forms`,
+          description: `There are ${data.count} ${data.name.toLowerCase()} forms submitted`,
+          forms: relevantForms
+        });
+        setIsModalOpen(true);
+      }
+    }
+  };
+
   return (
     <div className="space-y-8 p-6">
       <FilterSection
@@ -195,6 +237,15 @@ const AnalyticsPage = () => {
           fill="#ff7300"
           name="Number of Projects"
           onClick={handleProjectOwnerClick}
+        />
+
+        <ProjectChart
+          title="Submitted Forms by Type"
+          data={formChartData}
+          dataKey="count"
+          fill="#0088FE"
+          name="Number of Forms"
+          onClick={handleFormClick}
         />
       </div>
 
