@@ -27,19 +27,36 @@ const ProjectsListPage = () => {
     try {
       // Get projects from localStorage
       const rawProjects = JSON.parse(localStorage.getItem("projects") || "[]");
+      const projectForms = JSON.parse(localStorage.getItem("projectForm") || "[]");
+      
+      // Combine projects with their form data
+      const projectsWithForms = rawProjects.map((project: any) => {
+        const formData = Array.isArray(projectForms) 
+          ? projectForms.find((form: any) => form.projectName === project.title)
+          : projectForms.projectName === project.title ? projectForms : null;
+        
+        return {
+          ...project,
+          formData
+        };
+      });
       
       // Group projects by phase
       const grouped = phases.reduce((acc: Record<string, any[]>, phase) => {
-        acc[phase] = rawProjects.filter((project: any) => {
+        acc[phase] = projectsWithForms.filter((project: any) => {
+          // Check both phase-specific data and general project data
           const projectPhases = project.phases || [];
-          return projectPhases.some((p: any) => p.phase_name === phase);
+          const isInPhase = projectPhases.some((p: any) => p.phase_name === phase);
+          const hasPhaseForm = project.formData && project.formData[phase];
+          return isInPhase || hasPhaseForm;
         }).map((project: any) => ({
           id: project.id,
           title: project.title,
           teamMember: project.teamMember || 'Unassigned',
           date: new Date(project.date).toLocaleDateString(),
           progress: project.progress || "0%",
-          status: project.status || "not_started"
+          status: project.status || "not_started",
+          formData: project.formData
         }));
         return acc;
       }, {});
