@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { FilterSection } from "@/components/analytics/FilterSection";
 import { ProjectChart } from "@/components/analytics/ProjectChart";
 import { ProjectModal } from "@/components/analytics/ProjectModal";
+import { useToast } from "@/components/ui/use-toast";
 
 const AnalyticsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -9,6 +10,7 @@ const AnalyticsPage = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [projectData, setProjectData] = useState([]);
+  const { toast } = useToast();
 
   useEffect(() => {
     const loadProjects = () => {
@@ -16,24 +18,26 @@ const AnalyticsPage = () => {
         const storedProjects = localStorage.getItem('projects');
         if (storedProjects) {
           const parsedProjects = JSON.parse(storedProjects);
-          const transformedProjects = parsedProjects.map(project => ({
-            name: project.title,
-            title: project.title,
-            completion: project.status === 'completed' ? 100 : 
-                       project.status === 'in_process' ? 50 :
-                       project.status === 'on_hold' ? 30 :
-                       project.status === 'new' ? 10 :
-                       project.status === 'proposed' ? 5 : 0,
-            phase: project.status,
+          const transformedProjects = parsedProjects.map((project: any) => ({
+            name: project.title || 'Untitled Project',
+            title: project.title || 'Untitled Project',
+            completion: calculateCompletion(project.status),
+            phase: project.status || 'proposed',
             id: project.id,
-            description: project.description || `Status: ${project.status}`,
+            description: project.description || `Status: ${project.status || 'proposed'}`,
             teamMember: project.teamMember || 'Unassigned',
             projectOwner: project.projectOwner || 'Unassigned',
+            date: project.date ? new Date(project.date) : new Date(),
           }));
           setProjectData(transformedProjects);
         }
       } catch (error) {
         console.error('Error loading projects:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load project data",
+          variant: "destructive",
+        });
         setProjectData([]);
       }
     };
@@ -44,7 +48,19 @@ const AnalyticsPage = () => {
     return () => {
       window.removeEventListener('storage', loadProjects);
     };
-  }, []);
+  }, [toast]);
+
+  const calculateCompletion = (status: string) => {
+    switch (status) {
+      case 'completed': return 100;
+      case 'in_process': return 50;
+      case 'on_hold': return 30;
+      case 'new': return 10;
+      case 'proposed': return 5;
+      case 'canceled': return 0;
+      default: return 0;
+    }
+  };
 
   const phaseData = [
     { phase: "Proposed", count: projectData.filter(p => p.phase === "proposed").length },
@@ -55,7 +71,6 @@ const AnalyticsPage = () => {
     { phase: "Completed", count: projectData.filter(p => p.phase === "completed").length },
   ];
 
-  // Group projects by team member
   const teamMemberData = Object.entries(
     projectData.reduce((acc: any, project) => {
       const member = project.teamMember || 'Unassigned';
@@ -64,7 +79,6 @@ const AnalyticsPage = () => {
     }, {})
   ).map(([name, count]) => ({ name, count }));
 
-  // Group projects by project owner
   const projectOwnerData = Object.entries(
     projectData.reduce((acc: any, project) => {
       const owner = project.projectOwner || 'Unassigned';
@@ -79,53 +93,61 @@ const AnalyticsPage = () => {
       (phaseFilter === "all" || project.phase === phaseFilter)
   );
 
-  const handleProjectClick = (data) => {
-    const project = projectData.find(p => p.name === data.name);
-    if (project) {
-      setSelectedProject(project);
-      setIsModalOpen(true);
+  const handleProjectClick = (data: any) => {
+    if (data && data.name) {
+      const project = projectData.find(p => p.name === data.name);
+      if (project) {
+        setSelectedProject(project);
+        setIsModalOpen(true);
+      }
     }
   };
 
-  const handlePhaseClick = (data) => {
-    const projectsInPhase = projectData.filter(
-      p => p.phase.toLowerCase() === data.phase.toLowerCase()
-    );
-    if (projectsInPhase.length > 0) {
-      setSelectedProject({
-        name: `${data.phase} Phase`,
-        description: `There are ${data.count} projects in the ${data.phase} phase`,
-        projects: projectsInPhase
-      });
-      setIsModalOpen(true);
+  const handlePhaseClick = (data: any) => {
+    if (data && data.phase) {
+      const projectsInPhase = projectData.filter(
+        p => p.phase.toLowerCase() === data.phase.toLowerCase()
+      );
+      if (projectsInPhase.length > 0) {
+        setSelectedProject({
+          name: `${data.phase} Phase`,
+          description: `There are ${data.count} projects in the ${data.phase} phase`,
+          projects: projectsInPhase
+        });
+        setIsModalOpen(true);
+      }
     }
   };
 
-  const handleTeamMemberClick = (data) => {
-    const projectsByMember = projectData.filter(
-      p => (p.teamMember || 'Unassigned') === data.name
-    );
-    if (projectsByMember.length > 0) {
-      setSelectedProject({
-        name: `Projects by ${data.name}`,
-        description: `${data.name} is assigned to ${data.count} projects`,
-        projects: projectsByMember
-      });
-      setIsModalOpen(true);
+  const handleTeamMemberClick = (data: any) => {
+    if (data && data.name) {
+      const projectsByMember = projectData.filter(
+        p => (p.teamMember || 'Unassigned') === data.name
+      );
+      if (projectsByMember.length > 0) {
+        setSelectedProject({
+          name: `Projects by ${data.name}`,
+          description: `${data.name} is assigned to ${data.count} projects`,
+          projects: projectsByMember
+        });
+        setIsModalOpen(true);
+      }
     }
   };
 
-  const handleProjectOwnerClick = (data) => {
-    const projectsByOwner = projectData.filter(
-      p => (p.projectOwner || 'Unassigned') === data.name
-    );
-    if (projectsByOwner.length > 0) {
-      setSelectedProject({
-        name: `Projects owned by ${data.name}`,
-        description: `${data.name} owns ${data.count} projects`,
-        projects: projectsByOwner
-      });
-      setIsModalOpen(true);
+  const handleProjectOwnerClick = (data: any) => {
+    if (data && data.name) {
+      const projectsByOwner = projectData.filter(
+        p => (p.projectOwner || 'Unassigned') === data.name
+      );
+      if (projectsByOwner.length > 0) {
+        setSelectedProject({
+          name: `Projects owned by ${data.name}`,
+          description: `${data.name} owns ${data.count} projects`,
+          projects: projectsByOwner
+        });
+        setIsModalOpen(true);
+      }
     }
   };
 
