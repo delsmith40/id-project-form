@@ -18,6 +18,7 @@ const ProjectsListPage = () => {
   const [dialogMode, setDialogMode] = useState<"view" | "edit">("view");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [projectsByPhase, setProjectsByPhase] = useState<Record<string, any[]>>({});
+  const [instructionalRequests, setInstructionalRequests] = useState<any[]>([]);
   const { toast } = useToast();
 
   // Define the phases according to our database schema
@@ -25,7 +26,7 @@ const ProjectsListPage = () => {
 
   useEffect(() => {
     try {
-      // Get projects from localStorage
+      // Load projects from localStorage
       const rawProjects = JSON.parse(localStorage.getItem("projects") || "[]");
       const projectForms = JSON.parse(localStorage.getItem("projectForm") || "[]");
       
@@ -44,7 +45,6 @@ const ProjectsListPage = () => {
       // Group projects by phase
       const grouped = phases.reduce((acc: Record<string, any[]>, phase) => {
         acc[phase] = projectsWithForms.filter((project: any) => {
-          // Check both phase-specific data and general project data
           const projectPhases = project.phases || [];
           const isInPhase = projectPhases.some((p: any) => p.phase_name === phase);
           const hasPhaseForm = project.formData && project.formData[phase];
@@ -63,8 +63,11 @@ const ProjectsListPage = () => {
 
       setProjectsByPhase(grouped);
       
+      // Load instructional design requests
+      const savedRequests = JSON.parse(localStorage.getItem("instructionalRequests") || "[]");
+      setInstructionalRequests(savedRequests);
     } catch (error) {
-      console.error('Error loading projects:', error);
+      console.error('Error loading data:', error);
       toast({
         title: "Error",
         description: "Failed to load project data",
@@ -73,17 +76,15 @@ const ProjectsListPage = () => {
     }
   }, [toast]);
 
-  const instructionalRequests = JSON.parse(localStorage.getItem("instructionalRequests") || "[]");
-
   const handleDelete = (index: number) => {
     const updatedRequests = [...instructionalRequests];
     updatedRequests.splice(index, 1);
     localStorage.setItem("instructionalRequests", JSON.stringify(updatedRequests));
+    setInstructionalRequests(updatedRequests);
     toast({
       title: "Request Deleted",
       description: "The instructional design request has been deleted.",
     });
-    window.location.reload();
   };
 
   const handleEdit = (request: any) => {
