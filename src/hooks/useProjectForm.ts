@@ -15,42 +15,63 @@ export function useProjectForm() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleSave = () => {
-    const existingProjects = JSON.parse(localStorage.getItem("projects") || "[]");
-    const projectIndex = existingProjects.findIndex((p: any) => p.title === formData.projectName);
-    
-    const updatedProject = {
-      id: projectIndex >= 0 ? existingProjects[projectIndex].id : Date.now().toString(),
-      title: formData.projectName,
-      teamMember: formData.teamMember,
-      projectOwner: formData.projectOwner,
-      date: formData.date,
-      status: formData.status,
-    };
+  const handleSave = async () => {
+    try {
+      const existingProjects = JSON.parse(localStorage.getItem("projects") || "[]");
+      const projectIndex = existingProjects.findIndex((p: any) => p.title === formData.projectName);
+      
+      const updatedProject = {
+        id: projectIndex >= 0 ? existingProjects[projectIndex].id : Date.now().toString(),
+        title: formData.projectName,
+        teamMember: formData.teamMember,
+        projectOwner: formData.projectOwner,
+        date: formData.date ? formData.date.toISOString() : new Date().toISOString(),
+        status: formData.status,
+        progress: "0%"
+      };
 
-    if (projectIndex >= 0) {
-      existingProjects[projectIndex] = updatedProject;
-    } else {
-      existingProjects.push(updatedProject);
+      if (projectIndex >= 0) {
+        existingProjects[projectIndex] = updatedProject;
+      } else {
+        existingProjects.push(updatedProject);
+      }
+
+      localStorage.setItem("projects", JSON.stringify(existingProjects));
+      localStorage.setItem("projectForm", JSON.stringify(formData));
+      
+      return true;
+    } catch (error) {
+      console.error("Error saving project:", error);
+      throw error;
     }
-
-    localStorage.setItem("projects", JSON.stringify(existingProjects));
-    localStorage.setItem("projectForm", JSON.stringify(formData));
-
-    toast({
-      title: "Success",
-      description: "Project saved successfully",
-    });
   };
 
-  const handleSubmitProject = () => {
-    handleSave();
-    navigate("/");
+  const handleSubmitProject = async () => {
+    try {
+      await handleSave();
+      navigate("/");
+    } catch (error) {
+      console.error("Error submitting project:", error);
+      toast({
+        title: "Error",
+        description: "Failed to submit project",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleBypassSubmit = () => {
-    handleSave();
-    navigate("/");
+  const handleBypassSubmit = async () => {
+    try {
+      await handleSave();
+      navigate("/");
+    } catch (error) {
+      console.error("Error bypassing project submission:", error);
+      toast({
+        title: "Error",
+        description: "Failed to bypass submit project",
+        variant: "destructive",
+      });
+    }
   };
 
   const loadProjectData = (projectId: string) => {

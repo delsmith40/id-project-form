@@ -7,6 +7,7 @@ import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ProjectFormProps {
   phase: string;
@@ -14,6 +15,7 @@ interface ProjectFormProps {
 
 export function ProjectForm({ phase }: ProjectFormProps) {
   const { id } = useParams();
+  const { toast } = useToast();
   const {
     formData,
     setFormData,
@@ -31,9 +33,21 @@ export function ProjectForm({ phase }: ProjectFormProps) {
     }
   }, [id]);
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    handleSave();
+    try {
+      await handleSave();
+      toast({
+        title: "Success",
+        description: "Project saved successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save project",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
