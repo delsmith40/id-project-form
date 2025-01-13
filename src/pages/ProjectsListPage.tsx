@@ -11,37 +11,52 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { RequestDetailsDialog } from "@/components/forms/RequestDetailsDialog";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const ProjectsListPage = () => {
   const [selectedRequest, setSelectedRequest] = useState<any>(null);
   const [dialogMode, setDialogMode] = useState<"view" | "edit">("view");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  // Get and format projects from localStorage
-  const rawProjects = JSON.parse(localStorage.getItem("projects") || "[]");
-  const projects = rawProjects.map((project: any) => ({
-    id: project.id,
-    title: project.title,
-    teamMember: project.teamMember,
-    date: new Date(project.date).toLocaleDateString(),
-    progress: project.progress || "0%",
-    completedDate: project.completedDate ? new Date(project.completedDate).toLocaleDateString() : undefined,
-    status: project.status || "proposed"
-  }));
-
-  const instructionalRequests = JSON.parse(localStorage.getItem("instructionalRequests") || "[]");
+  const [projectsByPhase, setProjectsByPhase] = useState<Record<string, any[]>>({});
   const { toast } = useToast();
 
-  // Group projects by status
-  const groupedProjects = projects.reduce((acc: any, project: any) => {
-    const status = project.status || 'other';
-    if (!acc[status]) {
-      acc[status] = [];
+  // Define the phases according to our database schema
+  const phases = ['analyze', 'design', 'develop', 'implement', 'evaluate', 'document'];
+
+  useEffect(() => {
+    try {
+      // Get projects from localStorage
+      const rawProjects = JSON.parse(localStorage.getItem("projects") || "[]");
+      
+      // Group projects by phase
+      const grouped = phases.reduce((acc: Record<string, any[]>, phase) => {
+        acc[phase] = rawProjects.filter((project: any) => {
+          const projectPhases = project.phases || [];
+          return projectPhases.some((p: any) => p.phase_name === phase);
+        }).map((project: any) => ({
+          id: project.id,
+          title: project.title,
+          teamMember: project.teamMember || 'Unassigned',
+          date: new Date(project.date).toLocaleDateString(),
+          progress: project.progress || "0%",
+          status: project.status || "not_started"
+        }));
+        return acc;
+      }, {});
+
+      setProjectsByPhase(grouped);
+      
+    } catch (error) {
+      console.error('Error loading projects:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load project data",
+        variant: "destructive",
+      });
     }
-    acc[status].push(project);
-    return acc;
-  }, {});
+  }, [toast]);
+
+  const instructionalRequests = JSON.parse(localStorage.getItem("instructionalRequests") || "[]");
 
   const handleDelete = (index: number) => {
     const updatedRequests = [...instructionalRequests];
@@ -140,18 +155,18 @@ const ProjectsListPage = () => {
         />
       )}
       
-      {/* Display projects grouped by status */}
-      {Object.entries(groupedProjects).map(([status, projectsList]: [string, any]) => (
+      {/* Display projects grouped by phase */}
+      {phases.map((phase) => (
         <ProjectSection 
-          key={status}
-          title={`${status.charAt(0).toUpperCase() + status.slice(1)} Projects`}
-          projects={projectsList}
-          showProgress={status === "in_progress"}
-          showCompletedDate={status === "completed"}
+          key={phase}
+          title={`${phase.charAt(0).toUpperCase() + phase.slice(1)} Phase Projects`}
+          projects={projectsByPhase[phase] || []}
+          showProgress={true}
         />
       ))}
 
-      {projects.length === 0 && instructionalRequests.length === 0 && (
+      {Object.values(projectsByPhase).every(projects => projects.length === 0) && 
+       instructionalRequests.length === 0 && (
         <div className="text-center py-12">
           <h2 className="text-2xl font-semibold text-gray-700">No projects or requests found</h2>
           <p className="text-gray-500 mt-2">Start by creating a new project or submitting a request</p>
