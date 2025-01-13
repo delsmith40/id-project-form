@@ -35,6 +35,15 @@ export function ProjectForm({ phase }: ProjectFormProps) {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.projectName || !formData.teamMember || !formData.projectOwner) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       await handleSave();
       toast({
@@ -42,6 +51,7 @@ export function ProjectForm({ phase }: ProjectFormProps) {
         description: "Project saved successfully",
       });
     } catch (error) {
+      console.error("Error saving form:", error);
       toast({
         title: "Error",
         description: "Failed to save project",

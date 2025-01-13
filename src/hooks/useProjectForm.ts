@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
-import { ProjectFormData } from "@/components/project/ProjectInformationForm";
-import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
+import { ProjectFormData } from "@/components/project/ProjectInformationForm";
 
 export function useProjectForm() {
   const [formData, setFormData] = useState<ProjectFormData>({
     projectName: "",
-    date: undefined,
+    date: new Date(),
     teamMember: "",
     projectOwner: "",
     status: "proposed",
@@ -17,6 +17,10 @@ export function useProjectForm() {
 
   const handleSave = async () => {
     try {
+      if (!formData.projectName || !formData.teamMember || !formData.projectOwner) {
+        throw new Error("Missing required fields");
+      }
+
       const existingProjects = JSON.parse(localStorage.getItem("projects") || "[]");
       const projectIndex = existingProjects.findIndex((p: any) => p.title === formData.projectName);
       
@@ -37,7 +41,10 @@ export function useProjectForm() {
       }
 
       localStorage.setItem("projects", JSON.stringify(existingProjects));
-      localStorage.setItem("projectForm", JSON.stringify(formData));
+      localStorage.setItem("projectForm", JSON.stringify({
+        ...formData,
+        date: formData.date ? formData.date.toISOString() : new Date().toISOString(),
+      }));
       
       return true;
     } catch (error) {
@@ -48,6 +55,15 @@ export function useProjectForm() {
 
   const handleSubmitProject = async () => {
     try {
+      if (!formData.projectName || !formData.teamMember || !formData.projectOwner) {
+        toast({
+          title: "Error",
+          description: "Please fill in all required fields",
+          variant: "destructive",
+        });
+        return;
+      }
+
       await handleSave();
       navigate("/");
     } catch (error) {
@@ -75,16 +91,25 @@ export function useProjectForm() {
   };
 
   const loadProjectData = (projectId: string) => {
-    const projects = JSON.parse(localStorage.getItem("projects") || "[]");
-    const project = projects.find((p: any) => p.id === projectId);
-    
-    if (project) {
-      setFormData({
-        projectName: project.title || "",
-        date: project.date ? new Date(project.date) : undefined,
-        teamMember: project.teamMember || "",
-        projectOwner: project.projectOwner || "",
-        status: project.status || "proposed",
+    try {
+      const projects = JSON.parse(localStorage.getItem("projects") || "[]");
+      const project = projects.find((p: any) => p.id === projectId);
+      
+      if (project) {
+        setFormData({
+          projectName: project.title || "",
+          date: project.date ? new Date(project.date) : new Date(),
+          teamMember: project.teamMember || "",
+          projectOwner: project.projectOwner || "",
+          status: project.status || "proposed",
+        });
+      }
+    } catch (error) {
+      console.error("Error loading project data:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load project data",
+        variant: "destructive",
       });
     }
   };
