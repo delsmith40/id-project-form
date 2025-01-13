@@ -57,10 +57,3 @@ cd deployment
 zip -r ../covington-deployment.zip ./*
 
 echo "Deployment package created: covington-deployment.zip"
-EOL
-
-<lov-write file_path="config.js">
-window.APP_CONFIG = {
-  apiUrl: window.location.origin + '/api',
-  databaseName: 'covington_db'
-};
