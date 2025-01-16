@@ -1,6 +1,5 @@
--- Create the database if it doesn't exist
-CREATE DATABASE IF NOT EXISTS `covington_db`;
-USE `covington_db`;
+-- Check if tables exist before creating them
+-- This prevents errors if tables already exist in customer's database
 
 -- Projects table
 CREATE TABLE IF NOT EXISTS `projects` (
@@ -8,7 +7,9 @@ CREATE TABLE IF NOT EXISTS `projects` (
   `title` VARCHAR(255) NOT NULL,
   `description` TEXT,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `customer_id` VARCHAR(50),  -- Add customer-specific identifier
+  `external_ref` VARCHAR(100) -- Add external reference for customer system
 );
 
 -- Phases table
@@ -18,6 +19,7 @@ CREATE TABLE IF NOT EXISTS `phases` (
   `phase_name` ENUM('analyze', 'design', 'develop', 'implement', 'evaluate', 'document') NOT NULL,
   `status` ENUM('not_started', 'in_progress', 'completed') DEFAULT 'not_started',
   `completion_percentage` INT DEFAULT 0,
+  `customer_phase_id` VARCHAR(50), -- Add customer-specific phase identifier
   FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON DELETE CASCADE
 );
 
@@ -28,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `questions` (
   `question_text` TEXT NOT NULL,
   `answer` TEXT,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `customer_question_id` VARCHAR(50), -- Add customer-specific question identifier
   FOREIGN KEY (`phase_id`) REFERENCES `phases`(`id`) ON DELETE CASCADE
 );
 
@@ -40,19 +43,13 @@ CREATE TABLE IF NOT EXISTS `documents` (
   `content` TEXT,
   `file_path` VARCHAR(255),
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `customer_doc_id` VARCHAR(50), -- Add customer-specific document identifier
   FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`phase_id`) REFERENCES `phases`(`id`) ON DELETE CASCADE
 );
 
--- Insert some initial data
-INSERT INTO `projects` (`title`, `description`) VALUES 
-('Sample Project', 'This is a sample instructional design project');
-
--- Insert phases for the sample project
-INSERT INTO `phases` (`project_id`, `phase_name`, `status`) VALUES 
-(1, 'analyze', 'not_started'),
-(1, 'design', 'not_started'),
-(1, 'develop', 'not_started'),
-(1, 'implement', 'not_started'),
-(1, 'evaluate', 'not_started'),
-(1, 'document', 'not_started');
+-- Add indexes for better performance
+CREATE INDEX IF NOT EXISTS idx_project_customer ON projects(customer_id);
+CREATE INDEX IF NOT EXISTS idx_phase_customer ON phases(customer_phase_id);
+CREATE INDEX IF NOT EXISTS idx_question_customer ON questions(customer_question_id);
+CREATE INDEX IF NOT EXISTS idx_document_customer ON documents(customer_doc_id);
