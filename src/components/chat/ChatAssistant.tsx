@@ -7,15 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 export function ChatAssistant() {
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
-  const [serverUrl, setServerUrl] = useState("");
-
-  const handleServerUrlSubmit = (url: string) => {
-    setServerUrl(url);
-    toast({
-      title: "Connected to Ollama",
-      description: "You can now use the chat assistant",
-    });
-  };
+  const serverUrl = "http://localhost:11434";
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
@@ -27,7 +19,7 @@ export function ChatAssistant() {
               <X className="h-4 w-4" />
             </Button>
           </div>
-          <ChatDialog apiKey={serverUrl} onApiKeySubmit={handleServerUrlSubmit} />
+          <ChatDialog apiKey={serverUrl} onApiKeySubmit={() => {}} />
         </div>
       ) : (
         <Button
