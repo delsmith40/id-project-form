@@ -2,9 +2,10 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Loader2 } from "lucide-react";
+import { Loader2, Upload } from "lucide-react";
 import { ServerUrlForm } from "./ServerUrlForm";
 import { Message, sendMessage } from "./chatUtils";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ChatDialogProps {
   apiKey: string;
@@ -16,13 +17,43 @@ export function ChatDialog({ apiKey, onApiKeySubmit }: ChatDialogProps) {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [serverUrl, setServerUrl] = useState("");
+  const [documents, setDocuments] = useState<string[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files) return;
+
+    const newDocuments: string[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      try {
+        const text = await file.text();
+        newDocuments.push(text);
+        toast({
+          title: "Document loaded",
+          description: `${file.name} has been loaded successfully.`,
+        });
+      } catch (error) {
+        console.error("Error reading file:", error);
+        toast({
+          title: "Error",
+          description: `Failed to load ${file.name}`,
+          variant: "destructive",
+        });
+      }
+    }
+
+    setDocuments((prev) => [...prev, ...newDocuments]);
+  };
 
   const handleSend = async () => {
     if (!input.trim() || !serverUrl) return;
@@ -33,7 +64,7 @@ export function ChatDialog({ apiKey, onApiKeySubmit }: ChatDialogProps) {
     setIsLoading(true);
 
     try {
-      const response = await sendMessage(serverUrl, messages, userMessage);
+      const response = await sendMessage(serverUrl, messages, userMessage, documents);
       if (response) {
         setMessages((prev) => [
           ...prev,
@@ -42,6 +73,11 @@ export function ChatDialog({ apiKey, onApiKeySubmit }: ChatDialogProps) {
       }
     } catch (error) {
       console.error("Error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to send message",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -61,6 +97,13 @@ export function ChatDialog({ apiKey, onApiKeySubmit }: ChatDialogProps) {
     <>
       <ScrollArea className="flex-1 p-4" ref={scrollRef}>
         <div className="space-y-4">
+          {documents.length > 0 && (
+            <div className="bg-muted p-2 rounded-lg mb-4">
+              <p className="text-sm text-muted-foreground">
+                {documents.length} document{documents.length === 1 ? '' : 's'} loaded
+              </p>
+            </div>
+          )}
           {messages.map((message, i) => (
             <div
               key={i}
@@ -86,8 +129,24 @@ export function ChatDialog({ apiKey, onApiKeySubmit }: ChatDialogProps) {
           )}
         </div>
       </ScrollArea>
-      <div className="p-4 border-t">
-        <div className="flex gap-2">
+      <div className="p-4 border-t space-y-4">
+        <div className="flex items-center gap-2">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+            className="hidden"
+            multiple
+            accept=".txt,.md,.json"
+          />
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => fileInputRef.current?.click()}
+            title="Upload documents"
+          >
+            <Upload className="h-4 w-4" />
+          </Button>
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
