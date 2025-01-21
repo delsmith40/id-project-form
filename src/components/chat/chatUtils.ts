@@ -57,15 +57,18 @@ export async function sendMessage(serverUrl: string, messages: Message[], userMe
   } catch (error) {
     console.error("Error in sendMessage:", error);
     if (error instanceof TypeError && error.message === "Failed to fetch") {
-      return `To enable CORS for Ollama, run this command before starting the server:
+      return `Important: If you're using a deployed Lovable app, it cannot connect to localhost.
       
-export OLLAMA_ORIGINS="*"
-ollama serve
+You have two options:
+1. Run your Lovable app locally (using 'npm run dev')
+2. Deploy your Ollama server to a public URL with HTTPS
 
-If you're still having issues, ensure:
-1. The Ollama server is running
-2. The URL is correct (e.g., http://localhost:11434)
-3. You're using http:// for local connections`;
+For local development:
+1. Start Ollama with CORS enabled:
+   export OLLAMA_ORIGINS="*"
+   ollama serve
+2. Use http://localhost:11434 as the server URL
+3. Run your Lovable app locally`;
     }
     return `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`;
   }
