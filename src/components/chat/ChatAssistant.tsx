@@ -7,12 +7,12 @@ import { useToast } from "@/components/ui/use-toast";
 export function ChatAssistant() {
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
-  const [apiKey, setApiKey] = useState("");
+  const [serverUrl, setServerUrl] = useState("");
 
-  const handleApiKeySubmit = (key: string) => {
-    setApiKey(key);
+  const handleServerUrlSubmit = (url: string) => {
+    setServerUrl(url);
     toast({
-      title: "API Key Set",
+      title: "Connected to Ollama",
       description: "You can now use the chat assistant",
     });
   };
@@ -27,7 +27,7 @@ export function ChatAssistant() {
               <X className="h-4 w-4" />
             </Button>
           </div>
-          <ChatDialog apiKey={apiKey} onApiKeySubmit={handleApiKeySubmit} />
+          <ChatDialog apiKey={serverUrl} onApiKeySubmit={handleServerUrlSubmit} />
         </div>
       ) : (
         <Button

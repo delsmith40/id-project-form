@@ -18,7 +18,7 @@ export function ChatDialog({ apiKey, onApiKeySubmit }: ChatDialogProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [tempApiKey, setTempApiKey] = useState("");
+  const [serverUrl, setServerUrl] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export function ChatDialog({ apiKey, onApiKeySubmit }: ChatDialogProps) {
   }, [messages]);
 
   const handleSend = async () => {
-    if (!input.trim() || !apiKey) return;
+    if (!input.trim() || !serverUrl) return;
 
     const userMessage = { role: "user" as const, content: input };
     setMessages((prev) => [...prev, userMessage]);
@@ -36,14 +36,13 @@ export function ChatDialog({ apiKey, onApiKeySubmit }: ChatDialogProps) {
     setIsLoading(true);
 
     try {
-      const response = await fetch("https://api.perplexity.ai/chat/completions", {
+      const response = await fetch(`${serverUrl}/api/generate`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "llama-3.1-sonar-small-128k-online",
+          model: "llama2",
           messages: [
             {
               role: "system",
@@ -53,16 +52,15 @@ export function ChatDialog({ apiKey, onApiKeySubmit }: ChatDialogProps) {
             ...messages,
             userMessage,
           ],
-          temperature: 0.2,
-          max_tokens: 1000,
+          stream: false,
         }),
       });
 
       const data = await response.json();
-      if (data.choices && data.choices[0]) {
+      if (data.response) {
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: data.choices[0].message.content },
+          { role: "assistant", content: data.response },
         ]);
       }
     } catch (error) {
@@ -72,24 +70,24 @@ export function ChatDialog({ apiKey, onApiKeySubmit }: ChatDialogProps) {
     }
   };
 
-  if (!apiKey) {
+  if (!serverUrl) {
     return (
       <div className="p-4 space-y-4">
         <p className="text-sm text-muted-foreground">
-          Please enter your Perplexity API key to use the chat assistant:
+          Please enter your Ollama server URL (e.g., http://localhost:11434):
         </p>
         <Input
-          type="password"
-          value={tempApiKey}
-          onChange={(e) => setTempApiKey(e.target.value)}
-          placeholder="Enter API key"
+          type="text"
+          value={serverUrl}
+          onChange={(e) => setServerUrl(e.target.value)}
+          placeholder="Enter server URL"
         />
         <Button
           className="w-full"
-          onClick={() => onApiKeySubmit(tempApiKey)}
-          disabled={!tempApiKey}
+          onClick={() => onApiKeySubmit(serverUrl)}
+          disabled={!serverUrl}
         >
-          Submit
+          Connect
         </Button>
       </div>
     );
