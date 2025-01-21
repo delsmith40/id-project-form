@@ -31,9 +31,7 @@ export async function sendMessage(serverUrl: string, messages: Message[], userMe
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
       },
-      mode: 'cors',
       body: JSON.stringify({
         model: 'llama2',  // You can change this to any model you have installed on your Ollama server
         messages: [
@@ -59,7 +57,15 @@ export async function sendMessage(serverUrl: string, messages: Message[], userMe
   } catch (error) {
     console.error("Error in sendMessage:", error);
     if (error instanceof TypeError && error.message === "Failed to fetch") {
-      return "Unable to connect to the Ollama server. Please ensure:\n1. The server is running\n2. The URL is correct\n3. CORS is enabled on your Ollama server\n4. You're using http:// for local connections";
+      return `To enable CORS for Ollama, run this command before starting the server:
+      
+export OLLAMA_ORIGINS="*"
+ollama serve
+
+If you're still having issues, ensure:
+1. The Ollama server is running
+2. The URL is correct (e.g., http://localhost:11434)
+3. You're using http:// for local connections`;
     }
     return `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`;
   }
