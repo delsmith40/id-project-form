@@ -4,6 +4,9 @@ export interface Message {
 }
 
 export async function sendMessage(serverUrl: string, messages: Message[], userMessage: Message, documents?: string[]) {
+  // Ensure serverUrl ends with a trailing slash
+  const baseUrl = serverUrl.endsWith('/') ? serverUrl : `${serverUrl}/`;
+  
   const context = documents && documents.length > 0 
     ? `Context from uploaded documents:\n\n${documents.join('\n---\n')}\n\nUse the above context to help answer questions. If the context doesn't contain relevant information, let the user know.`
     : "You are a helpful assistant that helps users with their questions.";
@@ -14,7 +17,10 @@ export async function sendMessage(serverUrl: string, messages: Message[], userMe
   };
 
   try {
-    const response = await fetch(`${serverUrl}/api/generate`, {
+    // Construct the full URL properly
+    const apiUrl = new URL('api/generate', baseUrl).toString();
+    
+    const response = await fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
