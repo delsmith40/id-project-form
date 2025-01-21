@@ -11,6 +11,7 @@ export function ChatDialog() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [documents, setDocuments] = useState<string[]>([]);
+  const [apiKey, setApiKey] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -57,7 +58,7 @@ export function ChatDialog() {
     setIsLoading(true);
 
     try {
-      const response = await sendMessage("", messages, userMessage, documents);
+      const response = await sendMessage(apiKey, messages, userMessage, documents);
       if (response) {
         setMessages((prev) => [
           ...prev,
@@ -80,10 +81,24 @@ export function ChatDialog() {
     <>
       <ScrollArea className="flex-1 p-4" ref={scrollRef}>
         <div className="space-y-4">
+          {!apiKey && (
+            <div className="bg-yellow-100 p-4 rounded-lg mb-4">
+              <Input
+                type="password"
+                placeholder="Enter your Perplexity API key"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                className="mb-2"
+              />
+              <p className="text-sm text-yellow-700">
+                Please enter your Perplexity API key to enable AI-powered responses.
+              </p>
+            </div>
+          )}
           {documents.length > 0 && (
             <div className="bg-muted p-2 rounded-lg mb-4">
               <p className="text-sm text-muted-foreground">
-                {documents.length} document{documents.length === 1 ? '' : 's'} loaded
+                {documents.length} document{documents.length === 1 ? "" : "s"} loaded
               </p>
             </div>
           )}
