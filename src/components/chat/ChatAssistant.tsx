@@ -2,12 +2,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MessageCircle, X } from "lucide-react";
 import { ChatDialog } from "./ChatDialog";
-import { useToast } from "@/components/ui/use-toast";
 
 export function ChatAssistant() {
   const [isOpen, setIsOpen] = useState(false);
-  const { toast } = useToast();
-  const serverUrl = "http://localhost:11434";
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
@@ -19,7 +16,7 @@ export function ChatAssistant() {
               <X className="h-4 w-4" />
             </Button>
           </div>
-          <ChatDialog apiKey={serverUrl} onApiKeySubmit={() => {}} />
+          <ChatDialog />
         </div>
       ) : (
         <Button

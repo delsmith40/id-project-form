@@ -3,20 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2, Upload } from "lucide-react";
-import { ServerUrlForm } from "./ServerUrlForm";
 import { Message, sendMessage } from "./chatUtils";
 import { useToast } from "@/components/ui/use-toast";
 
-interface ChatDialogProps {
-  apiKey: string;
-  onApiKeySubmit: (key: string) => void;
-}
-
-export function ChatDialog({ apiKey, onApiKeySubmit }: ChatDialogProps) {
+export function ChatDialog() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [serverUrl, setServerUrl] = useState("");
   const [documents, setDocuments] = useState<string[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -56,7 +49,7 @@ export function ChatDialog({ apiKey, onApiKeySubmit }: ChatDialogProps) {
   };
 
   const handleSend = async () => {
-    if (!input.trim() || !serverUrl) return;
+    if (!input.trim()) return;
 
     const userMessage = { role: "user" as const, content: input };
     setMessages((prev) => [...prev, userMessage]);
@@ -64,7 +57,7 @@ export function ChatDialog({ apiKey, onApiKeySubmit }: ChatDialogProps) {
     setIsLoading(true);
 
     try {
-      const response = await sendMessage(serverUrl, messages, userMessage, documents);
+      const response = await sendMessage("", messages, userMessage, documents);
       if (response) {
         setMessages((prev) => [
           ...prev,
@@ -82,16 +75,6 @@ export function ChatDialog({ apiKey, onApiKeySubmit }: ChatDialogProps) {
       setIsLoading(false);
     }
   };
-
-  if (!serverUrl) {
-    return (
-      <ServerUrlForm
-        serverUrl={serverUrl}
-        onServerUrlChange={setServerUrl}
-        onSubmit={onApiKeySubmit}
-      />
-    );
-  }
 
   return (
     <>
