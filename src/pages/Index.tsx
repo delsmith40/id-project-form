@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { BarChart3, FileSpreadsheet, FilePlus, ListFilter } from "lucide-react";
 import { InstructionalDesignDialog } from "@/components/forms/InstructionalDesignDialog";
+import { ChatAssistant } from "@/components/chat/ChatAssistant";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -43,6 +44,7 @@ const Index = () => {
           </Button>
         </div>
       </div>
+      <ChatAssistant />
     </div>
   );
 };
