@@ -3,11 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2 } from "lucide-react";
-
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
+import { ServerUrlForm } from "./ServerUrlForm";
+import { Message, sendMessage } from "./chatUtils";
 
 interface ChatDialogProps {
   apiKey: string;
@@ -36,31 +33,11 @@ export function ChatDialog({ apiKey, onApiKeySubmit }: ChatDialogProps) {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${serverUrl}/api/generate`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "llama2",
-          messages: [
-            {
-              role: "system",
-              content:
-                "You are a helpful assistant that helps users fill out forms and can contact administrators if needed. Be concise and precise in your responses.",
-            },
-            ...messages,
-            userMessage,
-          ],
-          stream: false,
-        }),
-      });
-
-      const data = await response.json();
-      if (data.response) {
+      const response = await sendMessage(serverUrl, messages, userMessage);
+      if (response) {
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: data.response },
+          { role: "assistant", content: response },
         ]);
       }
     } catch (error) {
@@ -72,24 +49,11 @@ export function ChatDialog({ apiKey, onApiKeySubmit }: ChatDialogProps) {
 
   if (!serverUrl) {
     return (
-      <div className="p-4 space-y-4">
-        <p className="text-sm text-muted-foreground">
-          Please enter your Ollama server URL (e.g., http://localhost:11434):
-        </p>
-        <Input
-          type="text"
-          value={serverUrl}
-          onChange={(e) => setServerUrl(e.target.value)}
-          placeholder="Enter server URL"
-        />
-        <Button
-          className="w-full"
-          onClick={() => onApiKeySubmit(serverUrl)}
-          disabled={!serverUrl}
-        >
-          Connect
-        </Button>
-      </div>
+      <ServerUrlForm
+        serverUrl={serverUrl}
+        onServerUrlChange={setServerUrl}
+        onSubmit={onApiKeySubmit}
+      />
     );
   }
 
