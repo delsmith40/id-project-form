@@ -5,7 +5,7 @@ export function AnimatedBackground() {
       <div 
         className="absolute inset-0 bg-cover bg-center animate-scale-in" 
         style={{ 
-          backgroundImage: 'url("/lovable-uploads/045b8846-3861-481e-91d4-b99d5db55d3a.png")',
+          backgroundImage: 'url("https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7")',
           filter: 'brightness(0.4)'
         }} 
       />
